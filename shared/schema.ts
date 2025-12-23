@@ -1,12 +1,42 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 // Import auth and chat models to re-export or use
-import { users } from "./models/auth";
+import { users as authUsers } from "./models/auth";
 export * from "./models/auth";
 export * from "./models/chat";
+
+// Extend users table with profile info
+export const users = authUsers;
+
+export const profiles = pgTable("profiles", {
+  userId: varchar("user_id").primaryKey().references(() => users.id),
+  bio: text("bio"),
+  followers: integer("followers").default(0),
+  following: integer("following").default(0),
+  totalEarnings: integer("total_earnings").default(0),
+  coins: integer("coins").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const follows = pgTable("follows", {
+  id: serial("id").primaryKey(),
+  followerId: varchar("follower_id").notNull().references(() => users.id),
+  followingId: varchar("following_id").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  uniqueIndex("follows_unique").on(table.followerId, table.followingId)
+]);
+
+export const subscriptions = pgTable("subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  tier: text("tier", { enum: ["free", "monthly", "quarterly", "yearly"] }).default("free"),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 export const scripts = pgTable("scripts", {
   id: serial("id").primaryKey(),
@@ -15,8 +45,12 @@ export const scripts = pgTable("scripts", {
   description: text("description").notNull(),
   fileUrl: text("file_url").notNull(),
   fileName: text("file_name").notNull(),
+  hasFxManifest: boolean("has_fx_manifest").default(false).notNull(),
   virusScanStatus: text("virus_scan_status", { enum: ["pending", "clean", "infected"] }).default("pending").notNull(),
   virusScanReport: text("virus_scan_report"),
+  duration: text("duration", { enum: ["day", "week", "month"] }).default("week").notNull(),
+  isPremium: boolean("is_premium").default(false),
+  expiresAt: timestamp("expires_at"),
   price: integer("price").default(0).notNull(),
   views: integer("views").default(0).notNull(),
   downloads: integer("downloads").default(0).notNull(),
@@ -26,12 +60,26 @@ export const scripts = pgTable("scripts", {
 export const analytics = pgTable("analytics", {
   id: serial("id").primaryKey(),
   scriptId: integer("script_id").notNull().references(() => scripts.id),
+  userId: varchar("user_id"),
   type: text("type", { enum: ["view", "download"] }).notNull(),
   country: text("country"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => [
+  uniqueIndex("analytics_unique_view").on(table.scriptId, table.userId, table.type)
+]);
 
 // Relations
+export const profilesRelations = relations(profiles, ({ one, many }) => ({
+  user: one(users, { fields: [profiles.userId], references: [users.id] }),
+  followers: many(follows, { relationName: "followers" }),
+  following: many(follows, { relationName: "following" }),
+}));
+
+export const followsRelations = relations(follows, ({ one }) => ({
+  follower: one(users, { fields: [follows.followerId], references: [users.id] }),
+  following: one(users, { fields: [follows.followingId], references: [users.id] }),
+}));
+
 export const scriptsRelations = relations(scripts, ({ one, many }) => ({
   user: one(users, {
     fields: [scripts.userId],
@@ -54,9 +102,16 @@ export const insertScriptSchema = createInsertSchema(scripts).omit({
   downloads: true,
   virusScanStatus: true,
   virusScanReport: true,
+  hasFxManifest: true,
+  isPremium: true,
+  expiresAt: true,
   createdAt: true,
 });
 
+export type User = typeof users.$inferSelect;
+export type Profile = typeof profiles.$inferSelect;
+export type Follow = typeof follows.$inferSelect;
+export type Subscription = typeof subscriptions.$inferSelect;
 export type Script = typeof scripts.$inferSelect;
 export type InsertScript = z.infer<typeof insertScriptSchema>;
 export type Analytics = typeof analytics.$inferSelect;

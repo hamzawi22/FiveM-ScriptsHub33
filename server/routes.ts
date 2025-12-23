@@ -3,16 +3,26 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
-import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
 import { registerChatRoutes } from "./replit_integrations/chat";
 import { registerImageRoutes } from "./replit_integrations/image";
-import { isAuthenticated } from "./replit_integrations/auth";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
   baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
 });
+
+// Helper to check if file contains fxmanifest.lua
+async function checkFxManifest(fileUrl: string): Promise<boolean> {
+  try {
+    const response = await fetch(fileUrl);
+    const content = await response.text();
+    return content.includes("fxmanifest.lua") || content.includes("fx_version");
+  } catch {
+    return false;
+  }
+}
 
 export async function registerRoutes(
   httpServer: Server,
@@ -24,9 +34,13 @@ export async function registerRoutes(
   registerChatRoutes(app);
   registerImageRoutes(app);
 
-  // API Routes
+  // Scripts API
   app.get(api.scripts.list.path, async (req, res) => {
-    const scripts = await storage.getScripts();
+    const scripts = await storage.getScripts({
+      search: req.query.search as string,
+      duration: req.query.duration as string,
+      sortBy: req.query.sortBy as string,
+    });
     res.json(scripts);
   });
 
@@ -34,8 +48,9 @@ export async function registerRoutes(
     const script = await storage.getScript(Number(req.params.id));
     if (!script) return res.status(404).json({ message: "Script not found" });
     
-    // Track view (async, don't wait)
-    storage.trackAnalytics(script.id, "view", "Unknown"); // Simplification: IP geo lookup would be here
+    // Track view (deduped by analytics unique constraint)
+    const user = req.user as any;
+    await storage.trackAnalytics(script.id, user?.claims?.sub || null, "view");
     
     res.json(script);
   });
@@ -44,29 +59,42 @@ export async function registerRoutes(
     try {
       const input = api.scripts.create.input.parse(req.body);
       const user = req.user as any;
+      
+      // Check premium status for month duration
+      if (input.duration === "month") {
+        const sub = await storage.getPremiumStatus(user.claims.sub);
+        if (!sub || new Date(sub.expiresAt!) < new Date()) {
+          return res.status(400).json({ message: "Premium subscription required for monthly duration" });
+        }
+      }
+      
       const script = await storage.createScript(user.claims.sub, input);
       
-      // Trigger AI Virus Scan (Async)
+      // Trigger AI scan (async)
       (async () => {
         try {
+          const hasFxManifest = await checkFxManifest(script.fileUrl);
+          
           const completion = await openai.chat.completions.create({
             model: "gpt-5.1",
             messages: [
-              { role: "system", content: "You are a security expert scanning FiveM scripts for malicious code. Analyze the following script metadata and mock content. Respond with JSON { status: 'clean' | 'infected', report: string }." },
-              { role: "user", content: `Script Title: ${script.title}\nDescription: ${script.description}\nFile URL: ${script.fileUrl}` }
+              { role: "system", content: "You are a security expert scanning FiveM scripts. Respond with JSON { status: 'clean' | 'infected', report: string }." },
+              { role: "user", content: `Script: ${script.title}\nHas fxmanifest.lua: ${hasFxManifest}\nDescription: ${script.description}` }
             ],
-            response_format: { type: "json_object" }
+            response_format: { type: "json_object" },
+            max_completion_tokens: 500,
           });
           
           const result = JSON.parse(completion.choices[0].message.content || "{}");
           await storage.updateScriptScanStatus(
-            script.id, 
-            result.status || "clean", 
-            result.report || "No issues found."
+            script.id,
+            result.status || "clean",
+            hasFxManifest,
+            result.report || "Scan complete."
           );
         } catch (err) {
           console.error("Scan failed:", err);
-          await storage.updateScriptScanStatus(script.id, "clean", "Scan failed, marked clean by default.");
+          await storage.updateScriptScanStatus(script.id, "clean", false, "Scan failed, marked clean.");
         }
       })();
 
@@ -79,29 +107,101 @@ export async function registerRoutes(
     }
   });
 
+  app.delete(api.scripts.delete.path, isAuthenticated, async (req, res) => {
+    const script = await storage.getScript(Number(req.params.id));
+    const user = req.user as any;
+    if (!script || script.userId !== user.claims.sub) {
+      return res.status(404).json({ message: "Script not found" });
+    }
+    await storage.deleteScript(script.id);
+    res.status(204).send();
+  });
+
+  // Analytics
   app.post(api.analytics.track.path, async (req, res) => {
     const { scriptId, type, country } = req.body;
-    const result = await storage.trackAnalytics(scriptId, type, country || "Unknown");
-    res.status(201).json(result);
+    const user = req.user as any;
+    const result = await storage.trackAnalytics(scriptId, user?.claims?.sub || null, type, country);
+    if (result) {
+      res.status(201).json(result);
+    } else {
+      res.status(200).json({ message: "Already tracked" });
+    }
   });
 
-  app.get(api.analytics.stats.path, isAuthenticated, async (req, res) => {
+  app.get(api.analytics.stats.path, async (req, res) => {
     const stats = await storage.getScriptStats(Number(req.params.id));
-    const earnings = (stats.views * 0.01) + (stats.downloads * 0.10); // Mock earnings
-    res.json({ ...stats, earnings });
+    res.json(stats);
   });
 
-  // Seed Data
-  // In a real app, check if empty first.
-  const existing = await storage.getScripts();
-  if (existing.length === 0) {
-    // We can't easily seed with a specific user ID without knowing one from Auth. 
-    // We will skip seeding or use a placeholder if auth allows.
-    // Replit Auth users have UUIDs. We can't guess them.
-    // So we'll skip seeding for now or seed with a mock ID if the DB constraints allow (they don't, FK to users).
-    // Actually we can create a mock user in `authStorage` first if needed, but it's cleaner to let the first user create scripts.
-    console.log("No scripts found. Login to create one.");
-  }
+  // Profiles
+  app.get(api.profiles.get.path, async (req, res) => {
+    const profile = await storage.getProfile(req.params.userId);
+    if (!profile) return res.status(404).json({ message: "User not found" });
+    res.json({
+      id: profile.user.id,
+      email: profile.user.email,
+      firstName: profile.user.firstName,
+      bio: profile.bio,
+      followers: profile.followers,
+      following: profile.following,
+      totalEarnings: profile.totalEarnings,
+      coins: profile.coins,
+    });
+  });
+
+  app.get(api.profiles.getUserScripts.path, async (req, res) => {
+    const scripts = await storage.getUserScripts(req.params.userId);
+    res.json(scripts);
+  });
+
+  app.post(api.profiles.follow.path, isAuthenticated, async (req, res) => {
+    const user = req.user as any;
+    const followed = await storage.followUser(user.claims.sub, req.params.userId);
+    res.json({ followed });
+  });
+
+  // Subscriptions
+  app.get(api.subscription.getStatus.path, isAuthenticated, async (req, res) => {
+    const user = req.user as any;
+    const sub = await storage.getPremiumStatus(user.claims.sub);
+    const profile = await storage.getProfile(user.claims.sub) || { coins: 0 };
+    
+    res.json({
+      tier: sub?.tier || "free",
+      expiresAt: sub?.expiresAt?.toISOString(),
+      coins: profile.coins || 0,
+    });
+  });
+
+  app.post(api.subscription.purchase.path, isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { tier } = req.body;
+      
+      const tierConfig = {
+        monthly: { days: 30, coins: 100 },
+        quarterly: { days: 90, coins: 250 },
+        yearly: { days: 365, coins: 800 },
+      };
+      
+      const config = tierConfig[tier as keyof typeof tierConfig];
+      if (!config) return res.status(400).json({ message: "Invalid tier" });
+      
+      const profile = await storage.getProfile(user.claims.sub);
+      if (!profile || profile.coins < config.coins) {
+        return res.status(400).json({ message: "Insufficient coins" });
+      }
+      
+      // Deduct coins and create subscription
+      await storage.addCoins(user.claims.sub, -config.coins);
+      await storage.createSubscription(user.claims.sub, tier, config.days);
+      
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ message: "Purchase failed" });
+    }
+  });
 
   return httpServer;
 }
