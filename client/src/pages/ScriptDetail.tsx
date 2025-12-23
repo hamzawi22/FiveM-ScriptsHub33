@@ -74,7 +74,7 @@ export default function ScriptDetail() {
                 className="rounded-xl px-8 h-12 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 font-bold text-lg gap-2"
               >
                 <Download className="w-5 h-5" />
-                Download {script.price > 0 ? `$${script.price}` : 'Free'}
+                Download {script.coinsRequired > 0 ? `${script.coinsRequired}💰` : 'Free'}
               </Button>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function ScriptDetail() {
               <Button className="w-full gap-2 bg-primary hover:bg-primary/90">
                 <span>Follow Creator</span>
               </Button>
-              <Button variant="outline" className="w-full border-white/10 hover:bg-white/5">
+              <Button variant="outline" className="w-full border-white/10 hover:bg-white/5" onClick={() => window.location.href = `/creator/${script.userId}`}>
                 View Profile
               </Button>
             </div>

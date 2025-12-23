@@ -77,7 +77,7 @@ export default function Creator() {
               <Button 
                 onClick={() => followMutation.mutate()}
                 disabled={followMutation.isPending}
-                className="gap-2"
+                className="gap-2 bg-primary hover:bg-primary/90"
               >
                 <Heart className="w-4 h-4" />
                 Follow

@@ -14,11 +14,14 @@ export default function Home() {
   const { data: scripts, isLoading } = useScripts();
   const { user } = useAuth();
   const [search, setSearch] = useState("");
+  const [durationFilter, setDurationFilter] = useState<"all" | "day" | "week" | "month">("all");
 
-  const filteredScripts = scripts?.filter(script => 
-    script.title.toLowerCase().includes(search.toLowerCase()) ||
-    script.description.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredScripts = scripts?.filter(script => {
+    const matchesSearch = script.title.toLowerCase().includes(search.toLowerCase()) ||
+      script.description.toLowerCase().includes(search.toLowerCase());
+    const matchesDuration = durationFilter === "all" || script.duration === durationFilter;
+    return matchesSearch && matchesDuration;
+  });
 
   return (
     <div className="space-y-12">
@@ -89,14 +92,39 @@ export default function Home() {
           />
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-          <Button variant="outline" size="sm" className="bg-card border-border/50 text-muted-foreground whitespace-nowrap">
+          <Button 
+            variant={durationFilter === "all" ? "outline" : "ghost"} 
+            size="sm" 
+            onClick={() => setDurationFilter("all")}
+            className="bg-card border-border/50 text-muted-foreground whitespace-nowrap"
+          >
             <Filter className="w-4 h-4 mr-2" />
-            Duration
+            All
           </Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">1 Day</Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">1 Week</Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">1 Month</Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">All Scripts</Button>
+          <Button 
+            variant={durationFilter === "day" ? "outline" : "ghost"} 
+            size="sm" 
+            onClick={() => setDurationFilter("day")}
+            className="text-muted-foreground whitespace-nowrap"
+          >
+            1 Day
+          </Button>
+          <Button 
+            variant={durationFilter === "week" ? "outline" : "ghost"} 
+            size="sm" 
+            onClick={() => setDurationFilter("week")}
+            className="text-muted-foreground whitespace-nowrap"
+          >
+            1 Week
+          </Button>
+          <Button 
+            variant={durationFilter === "month" ? "outline" : "ghost"} 
+            size="sm" 
+            onClick={() => setDurationFilter("month")}
+            className="text-muted-foreground whitespace-nowrap"
+          >
+            1 Month
+          </Button>
         </div>
       </div>
 
@@ -147,8 +175,8 @@ export default function Home() {
                       <h3 className="font-display font-bold text-lg text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                         {script.title}
                       </h3>
-                      <span className={`px-2 py-1 rounded-md text-xs font-bold ${script.price > 0 ? 'bg-primary/20 text-primary' : 'bg-green-500/20 text-green-500'}`}>
-                        {script.price > 0 ? `$${script.price}` : 'FREE'}
+                      <span className={`px-2 py-1 rounded-md text-xs font-bold ${script.coinsRequired > 0 ? 'bg-primary/20 text-primary' : 'bg-green-500/20 text-green-500'}`}>
+                        {script.coinsRequired > 0 ? `${script.coinsRequired}💰` : 'FREE'}
                       </span>
                     </div>
                     

@@ -148,7 +148,8 @@ export class DatabaseStorage implements IStorage {
       byCountry[country] = (byCountry[country] || 0) + 1;
     });
 
-    const earnings = (script.views * 0.01) + (script.downloads * 0.10);
+    // Only count downloads for coins (not views)
+    const earnings = script.downloads * 5;
 
     return { views: script.views, downloads: script.downloads, earnings, byCountry };
   }

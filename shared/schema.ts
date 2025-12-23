@@ -43,6 +43,7 @@ export const scripts = pgTable("scripts", {
   userId: varchar("user_id").notNull().references(() => users.id),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  imageUrl: text("image_url"),
   fileUrl: text("file_url").notNull(),
   fileName: text("file_name").notNull(),
   hasFxManifest: boolean("has_fx_manifest").default(false).notNull(),
@@ -51,7 +52,7 @@ export const scripts = pgTable("scripts", {
   duration: text("duration", { enum: ["day", "week", "month"] }).default("week").notNull(),
   isPremium: boolean("is_premium").default(false),
   expiresAt: timestamp("expires_at"),
-  price: integer("price").default(0).notNull(),
+  coinsRequired: integer("coins_required").default(0).notNull(),
   views: integer("views").default(0).notNull(),
   downloads: integer("downloads").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -106,6 +107,9 @@ export const insertScriptSchema = createInsertSchema(scripts).omit({
   isPremium: true,
   expiresAt: true,
   createdAt: true,
+  imageUrl: true,
+}).extend({
+  coinsRequired: z.coerce.number().min(0),
 });
 
 export type User = typeof users.$inferSelect;
