@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { useCreateScript } from "@/hooks/use-scripts";
 import { Plus, Upload, Loader2, Sparkles } from "lucide-react";
@@ -27,6 +28,7 @@ export function UploadModal() {
       title: "",
       description: "",
       price: 0,
+      duration: "week",
       fileUrl: "", // In a real app, this would come from a file upload handler
       fileName: "",
     },
@@ -85,6 +87,29 @@ export function UploadModal() {
                       className="resize-none h-32 bg-background/50 border-white/10 focus:border-primary/50" 
                       {...field} 
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <Label className="text-foreground/80">Duration (Free for day/week, Premium for month)</Label>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="bg-background/50 border-white/10 focus:border-primary/50">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-white/10">
+                        <SelectItem value="day">1 Day (Free)</SelectItem>
+                        <SelectItem value="week">1 Week (Free)</SelectItem>
+                        <SelectItem value="month">1 Month (Premium Only)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

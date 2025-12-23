@@ -7,6 +7,7 @@ import { Layout } from "@/components/Layout";
 import Home from "@/pages/Home";
 import ScriptDetail from "@/pages/ScriptDetail";
 import Dashboard from "@/pages/Dashboard";
+import Creator from "@/pages/Creator";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
@@ -28,6 +29,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/script/:id" component={ScriptDetail} />
         <Route path="/dashboard" component={Dashboard} />
+        <Route path="/creator/:userId" component={Creator} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

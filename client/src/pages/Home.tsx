@@ -91,11 +91,12 @@ export default function Home() {
         <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
           <Button variant="outline" size="sm" className="bg-card border-border/50 text-muted-foreground whitespace-nowrap">
             <Filter className="w-4 h-4 mr-2" />
-            All Categories
+            Duration
           </Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">Free</Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">Paid</Button>
-          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">Verified Only</Button>
+          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">1 Day</Button>
+          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">1 Week</Button>
+          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">1 Month</Button>
+          <Button variant="ghost" size="sm" className="text-muted-foreground whitespace-nowrap">All Scripts</Button>
         </div>
       </div>
 

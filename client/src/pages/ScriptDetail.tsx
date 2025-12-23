@@ -136,6 +136,28 @@ export default function ScriptDetail() {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Creator Profile */}
+          <div className="bg-card border border-border/50 rounded-2xl p-6">
+            <h3 className="font-display font-bold text-lg mb-4">Creator</h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 pb-4 border-b border-white/5">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
+                  {script.userId.slice(0, 2).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">Developer ID</p>
+                  <p className="text-xs text-muted-foreground">{script.userId.slice(0, 8)}</p>
+                </div>
+              </div>
+              <Button className="w-full gap-2 bg-primary hover:bg-primary/90">
+                <span>Follow Creator</span>
+              </Button>
+              <Button variant="outline" className="w-full border-white/10 hover:bg-white/5">
+                View Profile
+              </Button>
+            </div>
+          </div>
+
           <div className="bg-card border border-border/50 rounded-2xl p-6">
             <h3 className="font-display font-bold text-lg mb-4">File Information</h3>
             <div className="space-y-4 text-sm">
@@ -144,12 +166,12 @@ export default function ScriptDetail() {
                 <span className="font-mono text-foreground">{script.fileName}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-white/5">
-                <span className="text-muted-foreground">Size</span>
-                <span className="font-mono text-foreground">2.4 MB</span>
+                <span className="text-muted-foreground">Duration</span>
+                <span className="font-mono text-foreground capitalize">{script.duration}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-white/5">
-                <span className="text-muted-foreground">Version</span>
-                <span className="font-mono text-foreground">1.0.0</span>
+                <span className="text-muted-foreground">Expires</span>
+                <span className="font-mono text-foreground">{script.expiresAt ? new Date(script.expiresAt).toLocaleDateString() : 'Permanent'}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-white/5">
                 <span className="text-muted-foreground">Last Updated</span>
