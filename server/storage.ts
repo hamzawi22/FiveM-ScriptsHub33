@@ -109,6 +109,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteScript(id: number): Promise<void> {
+    // Delete analytics first due to foreign key constraint
+    await db.delete(analytics).where(eq(analytics.scriptId, id));
     await db.delete(scripts).where(eq(scripts.id, id));
   }
 
