@@ -156,6 +156,61 @@ export const api = {
       },
     },
   },
+  search: {
+    profiles: {
+      method: 'GET' as const,
+      path: '/api/profiles/search',
+      responses: {
+        200: z.array(z.object({
+          id: z.string(),
+          firstName: z.string(),
+          email: z.string(),
+          followers: z.number(),
+          scriptsCount: z.number(),
+          isVerified: z.boolean(),
+          trustScore: z.number(),
+        })),
+      },
+    },
+  },
+  earnings: {
+    getEarnings: {
+      method: 'GET' as const,
+      path: '/api/earnings',
+      responses: {
+        200: z.object({
+          coins: z.number(),
+          totalEarnings: z.number(),
+          followers: z.number(),
+          last3MonthsDownloads: z.number(),
+          last3MonthsViews: z.number(),
+          scriptsCount: z.number(),
+          isVerified: z.boolean(),
+          verificationEligibility: z.object({
+            meetsFollowers: z.boolean(),
+            meetsDownloads: z.boolean(),
+            meetsViews: z.boolean(),
+            canApply: z.boolean(),
+          }),
+          lastVerificationRequest: z.object({
+            id: z.number(),
+            status: z.string(),
+            createdAt: z.string(),
+          }).nullable(),
+        }),
+        401: errorSchemas.unauthorized,
+      },
+    },
+    requestVerification: {
+      method: 'POST' as const,
+      path: '/api/verification/request',
+      responses: {
+        200: z.object({ success: z.boolean() }),
+        400: errorSchemas.validation,
+        401: errorSchemas.unauthorized,
+      },
+    },
+  },
 };
 
 export function buildUrl(path: string, params?: Record<string, string | number>): string {

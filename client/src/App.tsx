@@ -8,6 +8,8 @@ import Home from "@/pages/Home";
 import ScriptDetail from "@/pages/ScriptDetail";
 import Dashboard from "@/pages/Dashboard";
 import Creator from "@/pages/Creator";
+import SearchProfiles from "@/pages/SearchProfiles";
+import Earnings from "@/pages/Earnings";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
@@ -30,6 +32,8 @@ function Router() {
         <Route path="/script/:id" component={ScriptDetail} />
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/creator/:userId" component={Creator} />
+        <Route path="/search" component={SearchProfiles} />
+        <Route path="/earnings" component={Earnings} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

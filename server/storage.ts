@@ -1,6 +1,6 @@
 import { db } from "./db";
-import { scripts, analytics, profiles, follows, subscriptions, type InsertScript, type Script, type Analytics, type Profile, type Follow, type Subscription, users } from "@shared/schema";
-import { eq, sql, and, like, desc, inArray } from "drizzle-orm";
+import { scripts, analytics, profiles, follows, subscriptions, verificationRequests, type InsertScript, type Script, type Analytics, type Profile, type Follow, type Subscription, type VerificationRequest, users } from "@shared/schema";
+import { eq, sql, and, like, desc, inArray, gte } from "drizzle-orm";
 
 export interface IStorage {
   // Scripts
@@ -28,6 +28,12 @@ export interface IStorage {
   // Subscriptions
   getPremiumStatus(userId: string): Promise<Subscription | undefined>;
   createSubscription(userId: string, tier: string, daysValid: number): Promise<Subscription>;
+  
+  // Search & Verification
+  searchProfiles(query: string): Promise<any[]>;
+  getEarningsData(userId: string): Promise<any>;
+  createVerificationRequest(userId: string, followers: number, downloads: number, views: number): Promise<VerificationRequest>;
+  getPendingVerificationRequest(userId: string): Promise<VerificationRequest | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -229,6 +235,92 @@ export class DatabaseStorage implements IStorage {
       .values({ userId, tier: tier as any, expiresAt })
       .returning();
     return sub;
+  }
+
+  // Search & Verification
+  async searchProfiles(query: string): Promise<any[]> {
+    const userResults = await db.select().from(users).where(
+      like(sql`${users.firstName} || ' ' || ${users.lastName}`, `%${query}%`)
+    ).limit(20);
+
+    const results = await Promise.all(
+      userResults.map(async (user) => {
+        const profile = await this.getProfile(user.id);
+        const userScripts = await this.getUserScripts(user.id);
+        return {
+          id: user.id,
+          firstName: user.firstName || "Unknown",
+          email: user.email,
+          followers: profile?.followers || 0,
+          scriptsCount: userScripts.length,
+          isVerified: profile?.isVerified || false,
+          trustScore: profile?.trustScore || 0,
+        };
+      })
+    );
+    return results;
+  }
+
+  async getEarningsData(userId: string): Promise<any> {
+    const profile = await this.getProfile(userId);
+    const userScripts = await this.getUserScripts(userId);
+    
+    // Get last 3 months date
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+    // Calculate 3-month downloads and views
+    const analyticsData = await db.select().from(analytics).where(
+      and(
+        inArray(analytics.scriptId, userScripts.map(s => s.id)),
+        gte(analytics.createdAt, threeMonthsAgo)
+      )
+    );
+
+    const downloads = analyticsData.filter(a => a.type === 'download').length;
+    const views = analyticsData.filter(a => a.type === 'view').length;
+
+    const eligibility = {
+      meetsFollowers: (profile?.followers || 0) >= 500,
+      meetsDownloads: downloads >= 5000,
+      meetsViews: views >= 10000,
+    };
+
+    const lastVerification = await this.getPendingVerificationRequest(userId);
+
+    return {
+      coins: profile?.coins || 0,
+      totalEarnings: profile?.totalEarnings || 0,
+      followers: profile?.followers || 0,
+      last3MonthsDownloads: downloads,
+      last3MonthsViews: views,
+      scriptsCount: userScripts.length,
+      isVerified: profile?.isVerified || false,
+      verificationEligibility: {
+        ...eligibility,
+        canApply: eligibility.meetsFollowers && eligibility.meetsDownloads && eligibility.meetsViews,
+      },
+      lastVerificationRequest: lastVerification ? {
+        id: lastVerification.id,
+        status: lastVerification.status,
+        createdAt: lastVerification.createdAt.toISOString(),
+      } : null,
+    };
+  }
+
+  async createVerificationRequest(userId: string, followers: number, downloads: number, views: number): Promise<VerificationRequest> {
+    const [req] = await db.insert(verificationRequests)
+      .values({ userId, followersCount: followers, downloadsCount: downloads, viewsCount: views })
+      .returning();
+    return req;
+  }
+
+  async getPendingVerificationRequest(userId: string): Promise<VerificationRequest | undefined> {
+    const [req] = await db.select().from(verificationRequests)
+      .where(and(eq(verificationRequests.userId, userId), eq(verificationRequests.status, "pending")))
+      .orderBy(desc(verificationRequests.createdAt))
+      .limit(1);
+    return req;
   }
 }
 

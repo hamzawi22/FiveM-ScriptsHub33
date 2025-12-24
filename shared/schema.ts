@@ -18,7 +18,21 @@ export const profiles = pgTable("profiles", {
   following: integer("following").default(0),
   totalEarnings: integer("total_earnings").default(0),
   coins: integer("coins").default(0),
+  isVerified: boolean("is_verified").default(false),
+  trustScore: integer("trust_score").default(0),
   createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const verificationRequests = pgTable("verification_requests", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  status: text("status", { enum: ["pending", "approved", "rejected"] }).default("pending"),
+  followersCount: integer("followers_count").notNull(),
+  downloadsCount: integer("downloads_count").notNull(),
+  viewsCount: integer("views_count").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewNotes: text("review_notes"),
 });
 
 export const follows = pgTable("follows", {
@@ -120,3 +134,4 @@ export type Subscription = typeof subscriptions.$inferSelect;
 export type Script = typeof scripts.$inferSelect;
 export type InsertScript = z.infer<typeof insertScriptSchema>;
 export type Analytics = typeof analytics.$inferSelect;
+export type VerificationRequest = typeof verificationRequests.$inferSelect;

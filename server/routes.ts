@@ -203,5 +203,51 @@ export async function registerRoutes(
     }
   });
 
+  // Profile Search
+  app.get("/api/profiles/search", async (req, res) => {
+    const q = req.query.q as string;
+    if (!q || q.length < 2) {
+      return res.json([]);
+    }
+    const results = await storage.searchProfiles(q);
+    res.json(results);
+  });
+
+  // Earnings & Verification
+  app.get("/api/earnings", isAuthenticated, async (req, res) => {
+    const user = req.user as any;
+    const earnings = await storage.getEarningsData(user.claims.sub);
+    res.json(earnings);
+  });
+
+  app.post("/api/verification/request", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const earnings = await storage.getEarningsData(user.claims.sub);
+      
+      const { meetsFollowers, meetsDownloads, meetsViews } = earnings.verificationEligibility;
+      if (!meetsFollowers || !meetsDownloads || !meetsViews) {
+        return res.status(400).json({ message: "Requirements not met" });
+      }
+
+      // Check if already has pending request
+      const existing = await storage.getPendingVerificationRequest(user.claims.sub);
+      if (existing) {
+        return res.status(400).json({ message: "Already have pending verification request" });
+      }
+
+      await storage.createVerificationRequest(
+        user.claims.sub,
+        earnings.followers,
+        earnings.last3MonthsDownloads,
+        earnings.last3MonthsViews
+      );
+      
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ message: "Request failed" });
+    }
+  });
+
   return httpServer;
 }
