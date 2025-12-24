@@ -53,6 +53,7 @@ export const scripts = pgTable("scripts", {
   isPremium: boolean("is_premium").default(false),
   expiresAt: timestamp("expires_at"),
   coinsRequired: integer("coins_required").default(0).notNull(),
+  price: integer("price").default(0), // Kept for backward compatibility
   views: integer("views").default(0).notNull(),
   downloads: integer("downloads").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
