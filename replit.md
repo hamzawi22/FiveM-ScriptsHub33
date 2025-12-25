@@ -1,9 +1,9 @@
 # FiveM Script Marketplace
 
 ## Project Overview
-A comprehensive FiveM script marketplace with Google/Email authentication, AI-powered validation, coins-based economy, and creator verification system.
+A comprehensive FiveM script marketplace with Google/Email authentication, AI-powered validation, coins-based economy, creator verification system, and trust score calculation based on ratings, reports, and strikes.
 
-## Recent Changes (December 24-25, 2025)
+## Recent Changes (December 25, 2025)
 
 ### ✅ Completed Features
 1. **Creator Profile Pages** - Full profile display with:
@@ -37,10 +37,12 @@ A comprehensive FiveM script marketplace with Google/Email authentication, AI-po
 
 ### 🔄 API Endpoints
 - `GET /api/profiles/search` - Search creators by name
-- `GET /api/profiles/:userId` - Get creator profile (now includes isVerified, trustScore)
+- `GET /api/profiles/:userId` - Get creator profile (includes isVerified, trustScore)
 - `GET /api/earnings` - Get user's earnings data
 - `POST /api/verification/request` - Submit verification request
 - `GET /api/users/:userId/scripts` - Get creator's scripts
+- `POST /api/scripts/:id/rate` - Rate a script (1-5 stars with optional review)
+- `POST /api/scripts/:id/report` - Report a script (with reason and description)
 
 ### 📋 Business Logic
 - **Coins Economy**: Creators earn 5 coins per script download
@@ -48,7 +50,11 @@ A comprehensive FiveM script marketplace with Google/Email authentication, AI-po
   - 500+ followers (any time)
   - 5000+ downloads (last 3 months)
   - 10000+ views (last 3 months)
-- **Trust Score**: Calculated and displayed on creator profiles
+- **Trust Score System** (NEW):
+  - Formula: (avgRating × 1.5) - (validReports × 1) - (strikes × 2)
+  - Based on: ratings (1-5 stars), valid reports, and strikes/violations
+  - Auto-calculated and updated on creator profiles
+  - Displayed as decimal score on profile page
 - **AI Script Validation**: Scripts require fxmanifest.lua or are auto-rejected
 
 ### 🎯 Key Design Decisions
@@ -73,7 +79,26 @@ A comprehensive FiveM script marketplace with Google/Email authentication, AI-po
 - Auth: Replit Auth integration
 - AI: OpenAI for script validation
 
-### 📝 Notes
+### 📝 Database Tables (NEW)
+- `ratings` - Script ratings with user reviews (1-5 stars)
+- `reports` - Problem reports on scripts (malware, spam, stolen, broken, etc)
+- `strikes` - User violations/strikes for policy violations
+- All linked to profiles for trust score calculation
+
+### 🎯 Trust Score Components
+1. **Ratings**: Average rating of all scripts (weighted 1.5x)
+2. **Valid Reports**: Each valid report reduces score by 1 point
+3. **Strikes**: Each active strike reduces score by 2 points
+4. **Result**: Score is updated automatically when ratings/reports are submitted
+
+### 📝 Notes & Future Features
 - File uploads currently use simulated blob URLs (actual backend storage not implemented)
-- Trust score calculation logic ready but can be enhanced
-- Verification requests table has status field for future admin panel
+- **NOT YET IMPLEMENTED**: AI Recommendation Feed
+  - Would show personalized recommendations based on:
+    - Search history
+    - Viewing patterns
+    - Follow list
+    - Download patterns
+  - This requires: user preference tracking, ML model, and content-based filtering
+- Admin panel needed to review reports and issue strikes
+- Verification requests table ready for admin panel review

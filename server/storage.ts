@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { scripts, analytics, profiles, follows, subscriptions, verificationRequests, type InsertScript, type Script, type Analytics, type Profile, type Follow, type Subscription, type VerificationRequest, users } from "@shared/schema";
+import { scripts, analytics, profiles, follows, subscriptions, verificationRequests, ratings, reports, strikes, type InsertScript, type Script, type Analytics, type Profile, type Follow, type Subscription, type VerificationRequest, type Rating, type Report, type Strike, users } from "@shared/schema";
 import { eq, sql, and, like, desc, inArray, gte } from "drizzle-orm";
 
 export interface IStorage {
@@ -34,6 +34,11 @@ export interface IStorage {
   getEarningsData(userId: string): Promise<any>;
   createVerificationRequest(userId: string, followers: number, downloads: number, views: number): Promise<VerificationRequest>;
   getPendingVerificationRequest(userId: string): Promise<VerificationRequest | undefined>;
+  
+  // Ratings & Reports
+  rateScript(scriptId: number, userId: string, rating: number, review?: string): Promise<Rating>;
+  reportScript(scriptId: number, reportedById: string, reason: string, description?: string): Promise<Report>;
+  calculateTrustScore(userId: string): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -337,6 +342,62 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(verificationRequests.createdAt))
       .limit(1);
     return req;
+  }
+
+  // Ratings & Reports
+  async rateScript(scriptId: number, userId: string, rating: number, review?: string): Promise<Rating> {
+    const [rate] = await db.insert(ratings)
+      .values({ scriptId, userId, rating: Math.min(5, Math.max(1, rating)), review })
+      .onConflictDoUpdate({
+        target: [ratings.scriptId, ratings.userId],
+        set: { rating: Math.min(5, Math.max(1, rating)), review },
+      })
+      .returning();
+    return rate;
+  }
+
+  async reportScript(scriptId: number, reportedById: string, reason: string, description?: string): Promise<Report> {
+    const [report] = await db.insert(reports)
+      .values({ scriptId, reportedById, reason, description })
+      .returning();
+    return report;
+  }
+
+  async calculateTrustScore(userId: string): Promise<number> {
+    // Get all ratings for user's scripts
+    const userScripts = await this.getUserScripts(userId);
+    const userRatings = await db.select().from(ratings).where(
+      inArray(ratings.scriptId, userScripts.map(s => s.id))
+    );
+    const avgRating = userRatings.length > 0 
+      ? userRatings.reduce((sum, r) => sum + r.rating, 0) / userRatings.length 
+      : 0;
+
+    // Get valid reports against user's scripts
+    const validReports = await db.select().from(reports).where(
+      and(
+        inArray(reports.scriptId, userScripts.map(s => s.id)),
+        eq(reports.status, "valid")
+      )
+    );
+
+    // Get active strikes
+    const activeStrikes = await db.select().from(strikes).where(
+      and(
+        eq(strikes.userId, userId),
+        sql`${strikes.expiresAt} IS NULL OR ${strikes.expiresAt} > NOW()`
+      )
+    );
+
+    // Calculate trust score: (avgRating * 1.5) - (validReports * 1) - (strikes * 2)
+    const trustScore = Math.max(0, (avgRating * 1.5) - (validReports.length * 1) - (activeStrikes.length * 2));
+    
+    // Update profile
+    await db.update(profiles)
+      .set({ trustScore: Math.round(trustScore * 10) / 10 })
+      .where(eq(profiles.userId, userId));
+    
+    return trustScore;
   }
 }
 

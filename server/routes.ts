@@ -251,5 +251,48 @@ export async function registerRoutes(
     }
   });
 
+  // Ratings & Reports
+  app.post("/api/scripts/:id/rate", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { rating, review } = req.body;
+      
+      if (!rating || rating < 1 || rating > 5) {
+        return res.status(400).json({ message: "Rating must be between 1 and 5" });
+      }
+
+      const scriptId = Number(req.params.id);
+      await storage.rateScript(scriptId, user.claims.sub, rating, review);
+      
+      // Recalculate trust score for the script owner
+      const script = await storage.getScript(scriptId);
+      if (script) {
+        await storage.calculateTrustScore(script.userId);
+      }
+      
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ message: "Rating failed" });
+    }
+  });
+
+  app.post("/api/scripts/:id/report", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const { reason, description } = req.body;
+      
+      if (!reason) {
+        return res.status(400).json({ message: "Report reason is required" });
+      }
+
+      const scriptId = Number(req.params.id);
+      await storage.reportScript(scriptId, user.claims.sub, reason, description);
+      
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ message: "Report failed" });
+    }
+  });
+
   return httpServer;
 }

@@ -52,6 +52,38 @@ export const subscriptions = pgTable("subscriptions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const ratings = pgTable("ratings", {
+  id: serial("id").primaryKey(),
+  scriptId: integer("script_id").notNull().references(() => scripts.id),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  rating: integer("rating").notNull(), // 1-5
+  review: text("review"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  uniqueIndex("ratings_unique").on(table.scriptId, table.userId)
+]);
+
+export const reports = pgTable("reports", {
+  id: serial("id").primaryKey(),
+  scriptId: integer("script_id").notNull().references(() => scripts.id),
+  reportedById: varchar("reported_by_id").notNull().references(() => users.id),
+  reason: text("reason").notNull(), // "malware", "spam", "stolen", "broken", etc
+  description: text("description"),
+  status: text("status", { enum: ["pending", "reviewed", "valid", "invalid"] }).default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewedBy: varchar("reviewed_by_id"),
+});
+
+export const strikes = pgTable("strikes", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  reason: text("reason").notNull(), // "multiple_reports", "malware", "policy_violation", etc
+  severity: text("severity", { enum: ["warning", "suspension", "ban"] }).default("warning"),
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at"), // null = permanent
+});
+
 export const scripts = pgTable("scripts", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id),
@@ -111,6 +143,20 @@ export const analyticsRelations = relations(analytics, ({ one }) => ({
   }),
 }));
 
+export const ratingsRelations = relations(ratings, ({ one }) => ({
+  script: one(scripts, { fields: [ratings.scriptId], references: [scripts.id] }),
+  user: one(users, { fields: [ratings.userId], references: [users.id] }),
+}));
+
+export const reportsRelations = relations(reports, ({ one }) => ({
+  script: one(scripts, { fields: [reports.scriptId], references: [scripts.id] }),
+  reportedBy: one(users, { fields: [reports.reportedById], references: [users.id] }),
+}));
+
+export const strikesRelations = relations(strikes, ({ one }) => ({
+  user: one(users, { fields: [strikes.userId], references: [users.id] }),
+}));
+
 export const insertScriptSchema = createInsertSchema(scripts).omit({
   id: true,
   userId: true,
@@ -135,3 +181,6 @@ export type Script = typeof scripts.$inferSelect;
 export type InsertScript = z.infer<typeof insertScriptSchema>;
 export type Analytics = typeof analytics.$inferSelect;
 export type VerificationRequest = typeof verificationRequests.$inferSelect;
+export type Rating = typeof ratings.$inferSelect;
+export type Report = typeof reports.$inferSelect;
+export type Strike = typeof strikes.$inferSelect;
