@@ -4,9 +4,20 @@ import { useRoute } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { VirusScanBadge } from "@/components/VirusScanBadge";
-import { Loader2, Download, Eye, Calendar, Shield, Share2, AlertTriangle, FileText } from "lucide-react";
+import { Loader2, Download, Eye, Calendar, Shield, Share2, AlertTriangle, FileText, Star, Flag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ScriptDetail() {
   const [, params] = useRoute("/script/:id");
@@ -16,6 +27,42 @@ export default function ScriptDetail() {
   const { mutate: trackAnalytics } = useTrackAnalytics();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [userRating, setUserRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDescription, setReportDescription] = useState("");
+
+  const rateMutation = useMutation({
+    mutationFn: async (rating: number) => {
+      return await apiRequest("POST", `/api/scripts/${id}/rate`, { rating });
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Rating submitted!" });
+      queryClient.invalidateQueries({ queryKey: [`/api/scripts/${id}`] });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to submit rating", variant: "destructive" });
+    }
+  });
+
+  const reportMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("POST", `/api/scripts/${id}/report`, { 
+        reason: reportReason, 
+        description: reportDescription 
+      });
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Report submitted!" });
+      setShowReportDialog(false);
+      setReportReason("");
+      setReportDescription("");
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to submit report", variant: "destructive" });
+    }
+  });
 
   if (isLoading) return <DetailSkeleton />;
   if (error || !script) return <div className="text-center py-20 text-destructive">Failed to load script</div>;
@@ -137,6 +184,39 @@ export default function ScriptDetail() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Creator Profile */}
+          {/* Rating Section */}
+          {user && (
+            <div className="bg-card border border-border/50 rounded-2xl p-6">
+              <h3 className="font-display font-bold text-lg mb-4">Rate This Script</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      data-testid={`button-rate-${star}`}
+                      onClick={() => rateMutation.mutate(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      disabled={rateMutation.isPending}
+                      className="transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`w-6 h-6 ${
+                          star <= (hoverRating || userRating)
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-muted-foreground"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {userRating ? `You rated ${userRating} stars` : "Click to rate"}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="bg-card border border-border/50 rounded-2xl p-6">
             <h3 className="font-display font-bold text-lg mb-4">Creator</h3>
             <div className="space-y-3">
@@ -157,6 +237,74 @@ export default function ScriptDetail() {
               </Button>
             </div>
           </div>
+
+          {/* Report Section */}
+          {user && (
+            <>
+              <Button
+                variant="destructive"
+                className="w-full gap-2"
+                onClick={() => setShowReportDialog(true)}
+                data-testid="button-report-script"
+              >
+                <Flag className="w-4 h-4" />
+                Report Script
+              </Button>
+
+              <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Report Script</DialogTitle>
+                    <DialogDescription>
+                      Help us keep the marketplace safe by reporting problematic scripts.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Reason *</label>
+                      <select
+                        value={reportReason}
+                        onChange={(e) => setReportReason(e.target.value)}
+                        className="w-full bg-background border border-border rounded-lg p-2 text-sm"
+                      >
+                        <option value="">Select reason...</option>
+                        <option value="malware">Malware/Virus</option>
+                        <option value="spam">Spam</option>
+                        <option value="stolen">Stolen Code</option>
+                        <option value="broken">Broken/Non-functional</option>
+                        <option value="copyright">Copyright Violation</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Details</label>
+                      <Textarea
+                        value={reportDescription}
+                        onChange={(e) => setReportDescription(e.target.value)}
+                        placeholder="Describe the issue..."
+                        className="text-sm"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowReportDialog(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => reportMutation.mutate()}
+                        disabled={!reportReason || reportMutation.isPending}
+                      >
+                        {reportMutation.isPending ? "Submitting..." : "Submit Report"}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
 
           <div className="bg-card border border-border/50 rounded-2xl p-6">
             <h3 className="font-display font-bold text-lg mb-4">File Information</h3>
