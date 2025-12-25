@@ -55,7 +55,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <nav className="hidden md:flex items-center gap-1">
               <NavLink href="/" icon={Home}>Marketplace</NavLink>
               {user && (
-                <NavLink href="/dashboard" icon={LayoutDashboard}>Dashboard</NavLink>
+                <>
+                  <NavLink href="/search" icon={Home}>Search Creators</NavLink>
+                  <NavLink href="/dashboard" icon={LayoutDashboard}>Dashboard</NavLink>
+                </>
               )}
             </nav>
           </div>
@@ -104,7 +107,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <nav className="flex flex-col gap-2">
                     <NavLink href="/" icon={Home}>Marketplace</NavLink>
                     {user && (
-                      <NavLink href="/dashboard" icon={LayoutDashboard}>Dashboard</NavLink>
+                      <>
+                        <NavLink href="/search" icon={Home}>Search Creators</NavLink>
+                        <NavLink href="/dashboard" icon={LayoutDashboard}>Dashboard</NavLink>
+                      </>
                     )}
                   </nav>
                   {user && (

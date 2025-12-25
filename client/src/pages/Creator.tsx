@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Users, Download, Eye, Heart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Users, Download, Eye, Heart, Star, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface CreatorProfile {
@@ -15,6 +16,8 @@ interface CreatorProfile {
   following: number;
   totalEarnings: number;
   coins: number;
+  isVerified?: boolean;
+  trustScore?: number;
 }
 
 export default function Creator() {
@@ -55,9 +58,9 @@ export default function Creator() {
   const isOwnProfile = currentUser?.id === userId;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8" data-testid="page-creator-profile">
       {/* Profile Header */}
-      <Card className="bg-card/50 backdrop-blur-sm border-border/50 overflow-hidden">
+      <Card className="bg-card/50 backdrop-blur-sm border-border/50 overflow-hidden" data-testid="card-profile-header">
         <div className="h-32 bg-gradient-to-r from-primary/20 to-blue-600/20" />
         <CardContent className="pt-0">
           <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16 mb-6">
@@ -65,12 +68,26 @@ export default function Creator() {
               <div className="text-4xl font-bold text-primary">{profile.firstName?.slice(0, 1) || profile.email.slice(0, 1).toUpperCase()}</div>
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-display font-bold text-foreground">{profile.firstName || profile.email}</h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-display font-bold text-foreground">{profile.firstName || profile.email}</h1>
+                {profile.isVerified && (
+                  <Badge className="bg-green-500/20 text-green-400 border-green-500/30 flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    Verified Creator
+                  </Badge>
+                )}
+              </div>
               <p className="text-muted-foreground text-sm mt-1">{profile.bio || "No bio added yet"}</p>
-              <div className="flex items-center gap-6 mt-4 text-sm">
+              <div className="flex items-center gap-6 mt-4 text-sm flex-wrap">
                 <span className="flex items-center gap-2"><Users className="w-4 h-4" /> {profile.followers} Followers</span>
                 <span className="flex items-center gap-2"><Users className="w-4 h-4" /> {profile.following} Following</span>
                 <span className="flex items-center gap-2"><Eye className="w-4 h-4" /> {scripts?.length || 0} Scripts</span>
+                {profile.trustScore !== undefined && (
+                  <span className="flex items-center gap-1 text-yellow-500">
+                    <Star className="w-4 h-4 fill-yellow-500" />
+                    {(profile.trustScore || 0).toFixed(1)} Trust Score
+                  </span>
+                )}
               </div>
             </div>
             {!isOwnProfile && (
@@ -78,6 +95,7 @@ export default function Creator() {
                 onClick={() => followMutation.mutate()}
                 disabled={followMutation.isPending}
                 className="gap-2 bg-primary hover:bg-primary/90"
+                data-testid="button-follow-creator"
               >
                 <Heart className="w-4 h-4" />
                 Follow

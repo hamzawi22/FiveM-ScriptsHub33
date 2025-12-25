@@ -147,6 +147,8 @@ export async function registerRoutes(
       following: profile.following,
       totalEarnings: profile.totalEarnings,
       coins: profile.coins,
+      isVerified: profile.isVerified,
+      trustScore: profile.trustScore,
     });
   });
 
