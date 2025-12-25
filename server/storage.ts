@@ -164,11 +164,27 @@ export class DatabaseStorage implements IStorage {
 
   // Profiles
   async getProfile(userId: string) {
-    const [profile] = await db.query.profiles.findMany({
+    let [profile] = await db.query.profiles.findMany({
       where: eq(profiles.userId, userId),
       with: { user: true },
       limit: 1,
     });
+    
+    // Auto-create profile if it doesn't exist
+    if (!profile) {
+      try {
+        const [newProfile] = await db.insert(profiles)
+          .values({ userId })
+          .returning();
+        
+        const [user] = await db.select().from(users).where(eq(users.id, userId));
+        profile = { ...newProfile, user };
+      } catch {
+        // Profile creation failed, return undefined
+        return undefined;
+      }
+    }
+    
     return profile;
   }
 
