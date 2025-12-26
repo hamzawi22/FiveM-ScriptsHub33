@@ -31,16 +31,13 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
-      overflow-x: hidden;
     }
 
     h1, h2, h3, h4, h5, h6 {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      letter-spacing: -0.02em;
     }
 
-    /* Header */
     header {
       background: var(--bg-card);
       border-bottom: 1px solid var(--border);
@@ -65,14 +62,14 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+      cursor: pointer;
     }
 
     nav {
       display: flex;
       gap: 2rem;
+      flex: 1;
+      margin-left: 2rem;
     }
 
     nav a {
@@ -81,77 +78,33 @@
       font-size: 0.95rem;
       font-weight: 500;
       cursor: pointer;
-      transition: color 0.3s ease;
+      transition: color 0.3s;
     }
 
-    nav a:hover {
+    nav a:hover, nav a.active {
       color: var(--accent);
     }
 
-    /* Main Content */
-    main {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-    }
-
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      margin-bottom: 4rem;
-      animation: fadeInDown 0.8s ease;
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-    }
-
-    .cta-buttons {
+    .user-menu {
       display: flex;
       gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 4rem;
+      align-items: center;
     }
 
     button {
-      padding: 0.85rem 1.8rem;
+      padding: 0.8rem 1.5rem;
       border: none;
       border-radius: 0.5rem;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s;
       font-family: 'Inter', sans-serif;
     }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
-      border: 1px solid transparent;
     }
 
     .btn-primary:hover {
@@ -167,69 +120,89 @@
 
     .btn-secondary:hover {
       background: rgba(0, 212, 255, 0.1);
-      transform: translateY(-2px);
     }
 
-    /* Stats Section */
-    .stats-section {
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* Pages */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Home Page */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 4rem;
+    }
+
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
-      margin: 3rem 0;
+      margin-bottom: 4rem;
     }
 
     .stat-card {
-      background: linear-gradient(135deg, rgba(140, 92, 230, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
-      border: 1px solid rgba(0, 212, 255, 0.2);
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid var(--border);
       border-radius: 0.75rem;
       padding: 2rem;
       text-align: center;
-      backdrop-filter: blur(10px);
     }
 
     .stat-number {
       font-size: 2.5rem;
       font-weight: 700;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--accent);
       margin-bottom: 0.5rem;
     }
 
     .stat-label {
       color: var(--text-muted);
-      font-size: 1rem;
     }
 
-    /* Scripts Section */
-    .scripts-section {
-      margin: 4rem 0;
-    }
-
-    .section-title {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      color: var(--text);
-      text-align: center;
-    }
-
+    /* Scripts Grid */
     .scripts-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 2rem;
-      animation: fadeInUp 0.8s ease 0.2s both;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     .script-card {
@@ -237,33 +210,26 @@
       border: 1px solid var(--border);
       border-radius: 0.75rem;
       padding: 1.5rem;
-      transition: all 0.3s ease;
       cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+      transition: all 0.3s;
     }
 
     .script-card:hover {
       border-color: var(--accent);
       transform: translateY(-4px);
       box-shadow: 0 15px 40px rgba(0, 212, 255, 0.1);
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, transparent 100%);
     }
 
     .script-title {
       font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
       color: var(--text);
     }
 
     .script-desc {
-      font-size: 0.95rem;
       color: var(--text-muted);
       margin-bottom: 1rem;
-      flex: 1;
-      line-height: 1.5;
+      font-size: 0.95rem;
     }
 
     .script-meta {
@@ -274,39 +240,131 @@
       border-top: 1px solid var(--border);
       font-size: 0.9rem;
       color: var(--text-muted);
-      flex-wrap: wrap;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
     }
 
     .script-rating {
       color: #ffd700;
       font-weight: 600;
-      font-size: 1rem;
       margin-bottom: 1rem;
     }
 
     .script-actions {
       display: flex;
       gap: 0.75rem;
-      margin-top: auto;
     }
 
     .script-actions button {
       flex: 1;
-      padding: 0.7rem;
+      padding: 0.6rem;
       font-size: 0.9rem;
     }
 
-    .no-scripts {
-      text-align: center;
-      padding: 3rem;
+    /* Detail Page */
+    .detail-header {
+      background: linear-gradient(135deg, rgba(140, 92, 230, 0.2) 0%, rgba(0, 212, 255, 0.2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .detail-meta {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
       color: var(--text-muted);
-      grid-column: 1 / -1;
+    }
+
+    .detail-content {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+
+    .detail-main {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+    }
+
+    .detail-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+
+    .sidebar-card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* Rating Section */
+    .rating-stars {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .star {
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .star:hover, .star.active {
+      color: #ffd700;
+      transform: scale(1.1);
+    }
+
+    /* Profile Page */
+    .profile-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      font-weight: 700;
+    }
+
+    .profile-info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+      color: var(--text-muted);
     }
 
     /* Modal */
@@ -321,7 +379,6 @@
       z-index: 1000;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(4px);
     }
 
     .modal.active {
@@ -335,16 +392,13 @@
       padding: 2rem;
       max-width: 500px;
       width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
       position: relative;
     }
 
     .modal-header {
       font-size: 1.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       color: var(--accent);
-      font-weight: 700;
     }
 
     .modal-close {
@@ -356,11 +410,10 @@
       color: var(--text-muted);
       background: none;
       border: none;
-      padding: 0;
     }
 
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .form-group label {
@@ -368,11 +421,11 @@
       margin-bottom: 0.5rem;
       color: var(--text);
       font-weight: 600;
-      font-size: 0.95rem;
     }
 
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
       width: 100%;
       padding: 0.8rem;
       background: rgba(255, 255, 255, 0.05);
@@ -381,392 +434,423 @@
       color: var(--text);
       font-size: 1rem;
       font-family: 'Inter', sans-serif;
-      transition: all 0.3s ease;
     }
 
     .form-group input:focus,
-    .form-group textarea:focus {
+    .form-group textarea:focus,
+    .form-group select:focus {
       outline: none;
       border-color: var(--accent);
       background: rgba(0, 212, 255, 0.05);
-      box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
-    }
-
-    .stars {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .star {
-      font-size: 2.5rem;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: all 0.2s ease;
-      line-height: 1;
-    }
-
-    .star:hover,
-    .star.active {
-      color: #ffd700;
-      transform: scale(1.1);
-    }
-
-    /* Footer */
-    footer {
-      background: var(--bg-card);
-      border-top: 1px solid var(--border);
-      text-align: center;
-      padding: 2rem;
-      margin-top: 4rem;
-      color: var(--text-muted);
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2rem;
-      }
-
-      nav {
-        gap: 1rem;
-        font-size: 0.85rem;
-      }
-
-      .scripts-grid {
+      .detail-content {
         grid-template-columns: 1fr;
       }
 
-      .cta-buttons {
-        flex-direction: column;
+      .header-content {
+        flex-wrap: wrap;
       }
 
-      .cta-buttons button {
+      nav {
+        margin-left: 0;
         width: 100%;
+        gap: 1rem;
       }
+
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    .no-content {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
     }
   </style>
 </head>
 <body>
   <header>
     <div class="header-content">
+      <div class="logo" onclick="app.navigate('home')">🎮 FiveM Marketplace</div>
       <nav>
-        <a onclick="scrollToScripts()">Scripts</a>
-        <a onclick="scrollToStats()">Stats</a>
-        <a onclick="openUploadModal()">Upload</a>
+        <a onclick="app.navigate('home')" class="nav-link active" data-page="home">Home</a>
+        <a onclick="app.navigate('scripts')" class="nav-link" data-page="scripts">Scripts</a>
+        <a onclick="app.navigate('profiles')" class="nav-link" data-page="profiles">Creators</a>
       </nav>
-      <div class="logo">🎮 FiveM Marketplace</div>
+      <div class="user-menu">
+        <button class="btn-primary" onclick="app.toggleLogin()">
+          <span id="login-btn-text">Login</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <h1>FiveM Script Marketplace</h1>
-      <p>Discover, share, and download the best FiveM scripts in the community</p>
-      <div class="cta-buttons">
-        <button class="btn-secondary" onclick="scrollToScripts()">Browse Scripts</button>
-        <button class="btn-primary" onclick="openUploadModal()">Upload Script</button>
-      </div>
-    </section>
+    <!-- Home Page -->
+    <div class="page active" data-page="home">
+      <section class="hero">
+        <h1>FiveM Script Marketplace</h1>
+        <p>Discover, share, and download the best FiveM scripts in the community</p>
+        <div class="cta-buttons">
+          <button class="btn-secondary" onclick="app.navigate('scripts')">Browse Scripts</button>
+          <button class="btn-primary" onclick="app.showModal('upload')">Upload Script</button>
+        </div>
+      </section>
 
-    <section class="stats-section" id="stats-section">
-      <div class="stat-card">
-        <div class="stat-number" id="total-scripts">0</div>
-        <div class="stat-label">Scripts</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="total-creators">0</div>
-        <div class="stat-label">Creators</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="total-downloads">0</div>
-        <div class="stat-label">Downloads</div>
-      </div>
-    </section>
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="total-scripts">0</div>
+          <div class="stat-label">Scripts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="total-creators">0</div>
+          <div class="stat-label">Creators</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="total-downloads">0</div>
+          <div class="stat-label">Downloads</div>
+        </div>
+      </section>
 
-    <section class="scripts-section" id="scripts-section">
-      <h2 class="section-title">Featured Scripts</h2>
-      <div class="scripts-grid" id="scripts-grid">
-        <div class="no-scripts">Loading scripts...</div>
-      </div>
-    </section>
+      <h2 style="margin-bottom: 2rem;">Featured Scripts</h2>
+      <div class="scripts-grid" id="featured-grid"></div>
+    </div>
+
+    <!-- Scripts Page -->
+    <div class="page" data-page="scripts">
+      <h1 style="margin-bottom: 2rem;">All Scripts</h1>
+      <div class="scripts-grid" id="scripts-grid"></div>
+    </div>
+
+    <!-- Script Detail Page -->
+    <div class="page" data-page="script-detail">
+      <div id="detail-container"></div>
+    </div>
+
+    <!-- Profiles Page -->
+    <div class="page" data-page="profiles">
+      <h1 style="margin-bottom: 2rem;">Creators</h1>
+      <div class="scripts-grid" id="creators-grid"></div>
+    </div>
+
+    <!-- Profile Detail Page -->
+    <div class="page" data-page="profile-detail">
+      <div id="profile-container"></div>
+    </div>
   </main>
 
-  <div class="modal" id="ratingModal">
+  <!-- Login Modal -->
+  <div class="modal" id="login-modal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeRatingModal()">×</button>
-      <div class="modal-header">Rate Script</div>
+      <button class="modal-close" onclick="app.closeModal()">×</button>
+      <div class="modal-header">Login</div>
       <div class="form-group">
-        <label>Your Rating</label>
-        <div class="stars" id="rating-stars">
-          <span class="star" data-value="1">★</span>
-          <span class="star" data-value="2">★</span>
-          <span class="star" data-value="3">★</span>
-          <span class="star" data-value="4">★</span>
-          <span class="star" data-value="5">★</span>
-        </div>
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="Enter username...">
       </div>
       <div class="form-group">
-        <label>Review (Optional)</label>
-        <textarea id="review-text" placeholder="Share your thoughts..." rows="4"></textarea>
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter password...">
       </div>
-      <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="submitRating()">Submit Rating</button>
+      <button class="btn-primary" style="width: 100%;" onclick="app.login()">Login</button>
     </div>
   </div>
 
-  <div class="modal" id="uploadModal">
+  <!-- Upload Modal -->
+  <div class="modal" id="upload-modal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeUploadModal()">×</button>
+      <button class="modal-close" onclick="app.closeModal()">×</button>
       <div class="modal-header">Upload Script</div>
       <div class="form-group">
-        <label>Script Title *</label>
-        <input type="text" id="script-title" placeholder="Enter script name...">
+        <label>Title *</label>
+        <input type="text" id="upload-title" placeholder="Script name...">
       </div>
       <div class="form-group">
         <label>Description *</label>
-        <textarea id="script-desc" placeholder="Describe your script..." rows="4"></textarea>
+        <textarea id="upload-desc" placeholder="Describe your script..." rows="4"></textarea>
       </div>
       <div class="form-group">
-        <label>Script File (URL) *</label>
-        <input type="url" id="script-url" placeholder="https://example.com/script.zip">
+        <label>File URL *</label>
+        <input type="url" id="upload-url" placeholder="https://...">
       </div>
-      <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="submitScript()">Upload Script</button>
+      <button class="btn-primary" style="width: 100%;" onclick="app.uploadScript()">Upload</button>
     </div>
   </div>
 
-  <footer>
-    <p>&copy; 2025 FiveM Script Marketplace. All rights reserved.</p>
-  </footer>
+  <!-- Rating Modal -->
+  <div class="modal" id="rating-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">×</button>
+      <div class="modal-header">Rate Script</div>
+      <label>Rating</label>
+      <div class="rating-stars" id="modal-stars">
+        <span class="star" data-value="1" onclick="app.setRating(1)">★</span>
+        <span class="star" data-value="2" onclick="app.setRating(2)">★</span>
+        <span class="star" data-value="3" onclick="app.setRating(3)">★</span>
+        <span class="star" data-value="4" onclick="app.setRating(4)">★</span>
+        <span class="star" data-value="5" onclick="app.setRating(5)">★</span>
+      </div>
+      <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="app.submitRating()">Submit Rating</button>
+    </div>
+  </div>
 
   <script>
-    let scripts = [
-      {
-        id: 1,
-        title: "Job Management System",
-        description: "Comprehensive job system for servers with multiple job types, progression, and rewards.",
-        creator: "ServerMaster",
-        views: 1890,
-        downloads: 420,
-        rating: 4.9,
-        ratingCount: 38,
-        category: "Systems"
-      },
-      {
-        id: 2,
-        title: "Custom Vehicle Tuning",
-        description: "Complete vehicle customization system with advanced tuning options and save/load functionality.",
-        creator: "SpeedDemon",
-        views: 2100,
-        downloads: 580,
-        rating: 4.6,
-        ratingCount: 62,
-        category: "Vehicles"
-      },
-      {
-        id: 3,
-        title: "Advanced NPC Spawner",
-        description: "Powerful script to spawn and control NPCs with advanced AI behaviors and custom interactions.",
-        creator: "DevGuru",
-        views: 1250,
-        downloads: 340,
-        rating: 4.8,
-        ratingCount: 45,
-        category: "Utilities"
-      },
-      {
-        id: 4,
-        title: "Advanced Banking Script",
-        description: "Full-featured banking system with accounts, transfers, loans, and security features.",
-        creator: "FinancePro",
-        views: 3200,
-        downloads: 890,
-        rating: 4.7,
-        ratingCount: 94,
-        category: "Economy"
-      },
-      {
-        id: 5,
-        title: "Weapon Management Pro",
-        description: "Advanced weapon system with custom attachments, damage scaling, and realistic mechanics.",
-        creator: "WeaponSmith",
-        views: 2450,
-        downloads: 710,
-        rating: 4.5,
-        ratingCount: 71,
-        category: "Combat"
-      },
-      {
-        id: 6,
-        title: "Housing System v2",
-        description: "Complete housing solution with rentals, ownership, decorations, and safe storage.",
-        creator: "HouseBuilder",
-        views: 4100,
-        downloads: 1200,
-        rating: 4.9,
-        ratingCount: 156,
-        category: "Housing"
-      }
-    ];
+    const app = {
+      currentUser: null,
+      currentScript: null,
+      currentProfile: null,
+      selectedRating: 0,
+      
+      scripts: [
+        { id: 1, title: "Job Management System", desc: "Comprehensive job system with multiple job types, progression, and rewards.", creator: "ServerMaster", views: 1890, downloads: 420, rating: 4.9, ratingCount: 38 },
+        { id: 2, title: "Custom Vehicle Tuning", desc: "Complete vehicle customization system with advanced tuning options.", creator: "SpeedDemon", views: 2100, downloads: 580, rating: 4.6, ratingCount: 62 },
+        { id: 3, title: "Advanced NPC Spawner", desc: "Powerful script to spawn and control NPCs with advanced AI behaviors.", creator: "DevGuru", views: 1250, downloads: 340, rating: 4.8, ratingCount: 45 },
+        { id: 4, title: "Advanced Banking Script", desc: "Full-featured banking system with accounts, transfers, loans, and security features.", creator: "FinancePro", views: 3200, downloads: 890, rating: 4.7, ratingCount: 94 },
+        { id: 5, title: "Weapon Management Pro", desc: "Advanced weapon system with custom attachments, damage scaling, and realistic mechanics.", creator: "WeaponSmith", views: 2450, downloads: 710, rating: 4.5, ratingCount: 71 },
+        { id: 6, title: "Housing System v2", desc: "Complete housing solution with rentals, ownership, decorations, and safe storage.", creator: "HouseBuilder", views: 4100, downloads: 1200, rating: 4.9, ratingCount: 156 }
+      ],
 
-    let currentScriptId = null;
-    let selectedRating = 0;
+      creators: [
+        { id: 1, name: "ServerMaster", bio: "Professional script developer", followers: 500, scripts: 12, rating: 4.8 },
+        { id: 2, name: "SpeedDemon", bio: "Vehicle systems specialist", followers: 300, scripts: 8, rating: 4.6 },
+        { id: 3, name: "DevGuru", bio: "Full-stack FiveM developer", followers: 450, scripts: 15, rating: 4.7 }
+      ],
 
-    function initPage() {
-      renderScripts();
-      updateStats();
-      setupRatingStars();
-    }
+      init() {
+        this.renderScripts();
+        this.updateStats();
+      },
 
-    function renderScripts() {
-      const grid = document.getElementById('scripts-grid');
-      if (scripts.length === 0) {
-        grid.innerHTML = '<div class="no-scripts">No scripts available yet.</div>';
-        return;
-      }
+      navigate(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelector(`[data-page="${page}"]`).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+        document.querySelector(`[data-page="${page}"]`).classList.add('active');
 
-      grid.innerHTML = scripts.map(script => `
-        <div class="script-card">
-          <div class="script-title">${script.title}</div>
-          <div class="script-desc">${script.description}</div>
-          <div class="script-meta">
-            <div class="meta-item">👁️ ${script.views}</div>
-            <div class="meta-item">⬇️ ${script.downloads}</div>
-            <div class="meta-item">👤 ${script.creator}</div>
+        if (page === 'home') this.renderScripts('featured-grid', true);
+        if (page === 'scripts') this.renderScripts('scripts-grid');
+        if (page === 'profiles') this.renderCreators();
+      },
+
+      renderScripts(containerId = 'featured-grid', featured = false) {
+        const scripts = featured ? this.scripts.slice(0, 3) : this.scripts;
+        const container = document.getElementById(containerId);
+        container.innerHTML = scripts.map(s => `
+          <div class="script-card" onclick="app.viewScript(${s.id})">
+            <div class="script-title">${s.title}</div>
+            <div class="script-desc">${s.desc}</div>
+            <div class="script-meta">
+              <span>👁️ ${s.views}</span>
+              <span>⬇️ ${s.downloads}</span>
+              <span>👤 ${s.creator}</span>
+            </div>
+            <div class="script-rating">⭐ ${s.rating} (${s.ratingCount})</div>
+            <div class="script-actions">
+              <button class="btn-primary" onclick="event.stopPropagation(); app.download(${s.id})">Download</button>
+              <button class="btn-secondary" onclick="event.stopPropagation(); app.showModal('rating', ${s.id})">Rate</button>
+            </div>
           </div>
-          <div class="script-rating">⭐ ${script.rating} (${script.ratingCount})</div>
-          <div class="script-actions">
-            <button class="btn-primary" onclick="downloadScript(${script.id})">Download</button>
-            <button class="btn-secondary" onclick="openRatingModal(${script.id})">Rate</button>
+        `).join('');
+      },
+
+      renderCreators() {
+        const container = document.getElementById('creators-grid');
+        container.innerHTML = this.creators.map(c => `
+          <div class="script-card" onclick="app.viewProfile(${c.id})">
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #8c5ce6, #00d4ff); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
+                ${c.name[0]}
+              </div>
+            </div>
+            <div class="script-title" style="text-align: center;">${c.name}</div>
+            <div class="script-desc" style="text-align: center;">${c.bio}</div>
+            <div class="script-rating" style="text-align: center;">⭐ ${c.rating}</div>
+            <div class="script-meta" style="justify-content: center; border: none;">
+              <span>${c.followers} Followers</span>
+              <span>${c.scripts} Scripts</span>
+            </div>
           </div>
-        </div>
-      `).join('');
-    }
+        `).join('');
+      },
 
-    function updateStats() {
-      const totalDownloads = scripts.reduce((sum, s) => sum + s.downloads, 0);
-      const uniqueCreators = new Set(scripts.map(s => s.creator)).size;
+      viewScript(id) {
+        this.currentScript = this.scripts.find(s => s.id === id);
+        const html = `
+          <div class="detail-header">
+            <h1 class="detail-title">${this.currentScript.title}</h1>
+            <div class="detail-meta">
+              <span>👁️ ${this.currentScript.views} Views</span>
+              <span>⬇️ ${this.currentScript.downloads} Downloads</span>
+              <span>👤 ${this.currentScript.creator}</span>
+            </div>
+          </div>
+          <div class="detail-content">
+            <div class="detail-main">
+              <h2>Description</h2>
+              <p>${this.currentScript.desc}</p>
+            </div>
+            <div class="detail-sidebar">
+              <div class="sidebar-card">
+                <h3>⭐ Rating</h3>
+                <div class="script-rating">${this.currentScript.rating} (${this.currentScript.ratingCount} ratings)</div>
+                <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="app.showModal('rating', ${this.currentScript.id})">Rate This Script</button>
+              </div>
+              <div class="sidebar-card">
+                <h3>Creator</h3>
+                <p style="margin-bottom: 1rem;">${this.currentScript.creator}</p>
+                <button class="btn-primary" style="width: 100%;" onclick="app.navigate('profile-detail')">View Profile</button>
+              </div>
+              <div class="sidebar-card">
+                <button class="btn-primary" style="width: 100%; padding: 1rem;" onclick="app.download(${this.currentScript.id})">⬇️ Download</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('detail-container').innerHTML = html;
+        this.navigate('script-detail');
+      },
 
-      document.getElementById('total-scripts').textContent = scripts.length;
-      document.getElementById('total-downloads').textContent = totalDownloads.toLocaleString();
-      document.getElementById('total-creators').textContent = uniqueCreators;
-    }
+      viewProfile(id) {
+        this.currentProfile = this.creators.find(c => c.id === id);
+        const html = `
+          <div class="profile-header">
+            <div class="profile-avatar">${this.currentProfile.name[0]}</div>
+            <div class="profile-info">
+              <h1>${this.currentProfile.name}</h1>
+              <p style="color: var(--text-muted); margin-bottom: 1rem;">${this.currentProfile.bio}</p>
+              <div class="profile-stats">
+                <div><strong>${this.currentProfile.followers}</strong> Followers</div>
+                <div><strong>${this.currentProfile.scripts}</strong> Scripts</div>
+                <div>⭐ <strong>${this.currentProfile.rating}</strong> Rating</div>
+              </div>
+              <button class="btn-primary" style="margin-top: 1rem;">Follow</button>
+            </div>
+          </div>
+          <h2 style="margin: 2rem 0 1rem;">Scripts by ${this.currentProfile.name}</h2>
+          <div class="scripts-grid">
+            ${this.scripts.filter(s => s.creator === this.currentProfile.name).map(s => `
+              <div class="script-card" onclick="app.viewScript(${s.id})">
+                <div class="script-title">${s.title}</div>
+                <div class="script-desc">${s.desc}</div>
+                <div class="script-rating">⭐ ${s.rating}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        document.getElementById('profile-container').innerHTML = html;
+        this.navigate('profile-detail');
+      },
 
-    function downloadScript(scriptId) {
-      const script = scripts.find(s => s.id === scriptId);
-      if (script) {
-        alert(`Downloading: ${script.title}\n\nIn a real app, this would download the script.`);
-      }
-    }
+      updateStats() {
+        document.getElementById('total-scripts').textContent = this.scripts.length;
+        document.getElementById('total-creators').textContent = this.creators.length;
+        document.getElementById('total-downloads').textContent = this.scripts.reduce((a, s) => a + s.downloads, 0);
+      },
 
-    function openRatingModal(scriptId) {
-      currentScriptId = scriptId;
-      selectedRating = 0;
-      document.getElementById('ratingModal').classList.add('active');
-      document.getElementById('review-text').value = '';
-      updateStarDisplay();
-    }
+      download(scriptId) {
+        const script = this.scripts.find(s => s.id === scriptId);
+        alert(`Downloading: ${script.title}`);
+        script.downloads++;
+        this.updateStats();
+      },
 
-    function closeRatingModal() {
-      document.getElementById('ratingModal').classList.remove('active');
-      currentScriptId = null;
-    }
+      showModal(type, scriptId = null) {
+        this.closeModal();
+        if (type === 'upload') {
+          if (!this.currentUser) {
+            alert('Please login first');
+            this.toggleLogin();
+            return;
+          }
+          document.getElementById('upload-modal').classList.add('active');
+        }
+        if (type === 'rating') {
+          if (!this.currentUser) {
+            alert('Please login first');
+            this.toggleLogin();
+            return;
+          }
+          this.currentScript = this.scripts.find(s => s.id === scriptId);
+          document.getElementById('rating-modal').classList.add('active');
+        }
+      },
 
-    function setupRatingStars() {
-      const stars = document.querySelectorAll('#rating-stars .star');
-      stars.forEach(star => {
-        star.addEventListener('click', () => {
-          selectedRating = parseInt(star.dataset.value);
-          updateStarDisplay();
+      setRating(rating) {
+        this.selectedRating = rating;
+        document.querySelectorAll('#modal-stars .star').forEach((star, idx) => {
+          star.classList.toggle('active', idx < rating);
         });
-        star.addEventListener('mouseover', () => {
-          const hoverValue = parseInt(star.dataset.value);
-          stars.forEach((s, idx) => {
-            s.classList.toggle('active', idx < hoverValue);
-          });
-        });
-      });
-      document.getElementById('rating-stars').addEventListener('mouseleave', updateStarDisplay);
-    }
+      },
 
-    function updateStarDisplay() {
-      const stars = document.querySelectorAll('#rating-stars .star');
-      stars.forEach((star, idx) => {
-        star.classList.toggle('active', idx < selectedRating);
-      });
-    }
+      submitRating() {
+        if (this.selectedRating === 0) {
+          alert('Please select a rating');
+          return;
+        }
+        this.currentScript.ratingCount++;
+        this.currentScript.rating = ((this.currentScript.rating * (this.currentScript.ratingCount - 1)) + this.selectedRating) / this.currentScript.ratingCount;
+        alert(`Thanks for rating ${this.currentScript.title}!`);
+        this.closeModal();
+        this.renderScripts();
+      },
 
-    function submitRating() {
-      if (selectedRating === 0) {
-        alert('Please select a rating');
-        return;
+      uploadScript() {
+        const title = document.getElementById('upload-title').value;
+        const desc = document.getElementById('upload-desc').value;
+        const url = document.getElementById('upload-url').value;
+
+        if (!title || !desc || !url) {
+          alert('Please fill all fields');
+          return;
+        }
+
+        const newScript = {
+          id: this.scripts.length + 1,
+          title,
+          desc,
+          creator: this.currentUser || 'Anonymous',
+          views: 0,
+          downloads: 0,
+          rating: 0,
+          ratingCount: 0
+        };
+
+        this.scripts.push(newScript);
+        alert('Script uploaded successfully!');
+        this.closeModal();
+        this.renderScripts();
+        this.updateStats();
+      },
+
+      toggleLogin() {
+        document.getElementById('login-modal').classList.add('active');
+      },
+
+      login() {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+
+        if (!username || !password) {
+          alert('Please enter username and password');
+          return;
+        }
+
+        this.currentUser = username;
+        document.getElementById('login-btn-text').textContent = `${username}`;
+        this.closeModal();
+      },
+
+      closeModal() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
       }
-      const script = scripts.find(s => s.id === currentScriptId);
-      if (script) {
-        script.ratingCount++;
-        script.rating = (script.rating * (script.ratingCount - 1) + selectedRating) / script.ratingCount;
-        alert(`Thank you for rating "${script.title}" with ${selectedRating} stars!`);
-        closeRatingModal();
-        renderScripts();
-        updateStats();
-      }
-    }
+    };
 
-    function openUploadModal() {
-      document.getElementById('uploadModal').classList.add('active');
-    }
-
-    function closeUploadModal() {
-      document.getElementById('uploadModal').classList.remove('active');
-    }
-
-    function submitScript() {
-      const title = document.getElementById('script-title').value;
-      const desc = document.getElementById('script-desc').value;
-      const url = document.getElementById('script-url').value;
-
-      if (!title || !desc || !url) {
-        alert('Please fill all required fields');
-        return;
-      }
-
-      const newScript = {
-        id: scripts.length + 1,
-        title,
-        description: desc,
-        creator: "Anonymous",
-        views: 0,
-        downloads: 0,
-        rating: 0,
-        ratingCount: 0,
-        category: "Other"
-      };
-
-      scripts.push(newScript);
-      alert('Script uploaded successfully!');
-      closeUploadModal();
-      document.getElementById('script-title').value = '';
-      document.getElementById('script-desc').value = '';
-      document.getElementById('script-url').value = '';
-      renderScripts();
-      updateStats();
-    }
-
-    function scrollToScripts() {
-      document.getElementById('scripts-section').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function scrollToStats() {
-      document.getElementById('stats-section').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    window.onclick = function(event) {
-      const ratingModal = document.getElementById('ratingModal');
-      const uploadModal = document.getElementById('uploadModal');
-      if (event.target === ratingModal) ratingModal.classList.remove('active');
-      if (event.target === uploadModal) uploadModal.classList.remove('active');
-    }
-
-    document.addEventListener('DOMContentLoaded', initPage);
+    app.init();
   </script>
 </body>
 </html>
