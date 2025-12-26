@@ -52,6 +52,18 @@ export default function Creator() {
     enabled: !!userId,
   });
 
+  const { data: scriptRatings } = useQuery({
+    queryKey: [`/api/scripts/ratings`, scripts],
+    enabled: !!scripts && scripts.length > 0,
+    queryFn: async () => {
+      if (!scripts || scripts.length === 0) return [];
+      const ratings = await Promise.all(
+        scripts.map(s => fetch(`/api/scripts/${s.id}/ratings`).then(r => r.json()))
+      );
+      return ratings;
+    }
+  });
+
   if (isLoading) return <div className="flex items-center justify-center h-96"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>;
   if (!profile) return <div className="text-center py-20 text-destructive">Creator not found</div>;
 

@@ -294,5 +294,33 @@ export async function registerRoutes(
     }
   });
 
+  // Get script ratings
+  app.get("/api/scripts/:id/ratings", async (req, res) => {
+    try {
+      const scriptId = Number(req.params.id);
+      const ratings = await storage.getScriptRatings(scriptId);
+      res.json(ratings);
+    } catch (err) {
+      res.status(500).json({ message: "Failed to fetch ratings" });
+    }
+  });
+
+  // Follow user
+  app.post("/api/users/:userId/follow", isAuthenticated, async (req, res) => {
+    try {
+      const user = req.user as any;
+      const targetUserId = req.params.userId;
+      
+      if (user.claims.sub === targetUserId) {
+        return res.status(400).json({ message: "Cannot follow yourself" });
+      }
+
+      const success = await storage.followUser(user.claims.sub, targetUserId);
+      res.json({ success });
+    } catch (err) {
+      res.status(500).json({ message: "Follow failed" });
+    }
+  });
+
   return httpServer;
 }

@@ -38,6 +38,7 @@ export interface IStorage {
   // Ratings & Reports
   rateScript(scriptId: number, userId: string, rating: number, review?: string): Promise<Rating>;
   reportScript(scriptId: number, reportedById: string, reason: string, description?: string): Promise<Report>;
+  getScriptRatings(scriptId: number): Promise<any>;
   calculateTrustScore(userId: string): Promise<number>;
 }
 
@@ -361,6 +362,18 @@ export class DatabaseStorage implements IStorage {
       .values({ scriptId, reportedById, reason, description })
       .returning();
     return report;
+  }
+
+  async getScriptRatings(scriptId: number): Promise<any> {
+    const scriptRatings = await db.select().from(ratings).where(eq(ratings.scriptId, scriptId));
+    const avgRating = scriptRatings.length > 0 
+      ? scriptRatings.reduce((sum, r) => sum + r.rating, 0) / scriptRatings.length 
+      : 0;
+    return {
+      average: Math.round(avgRating * 10) / 10,
+      count: scriptRatings.length,
+      ratings: scriptRatings
+    };
   }
 
   async calculateTrustScore(userId: string): Promise<number> {

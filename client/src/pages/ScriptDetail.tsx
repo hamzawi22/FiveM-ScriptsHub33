@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +67,8 @@ export default function ScriptDetail() {
   if (isLoading) return <DetailSkeleton />;
   if (error || !script) return <div className="text-center py-20 text-destructive">Failed to load script</div>;
 
+  const isOwnProfile = user?.id === script.userId;
+
   const handleDownload = () => {
     trackAnalytics({ scriptId: script.id, type: "download", country: "US" }); // Mock country
     toast({
@@ -83,6 +85,12 @@ export default function ScriptDetail() {
         toast({ title: "Scan Complete", description: "The script has been re-scanned." });
       }
     });
+  };
+
+  const handleShare = () => {
+    const url = `${window.location.origin}/script/${script.id}`;
+    navigator.clipboard.writeText(url);
+    toast({ title: "Copied", description: "Script link copied to clipboard!" });
   };
 
   return (
@@ -112,7 +120,13 @@ export default function ScriptDetail() {
             </div>
             
             <div className="flex items-center gap-3">
-              <Button variant="outline" size="icon" className="rounded-xl border-white/10 hover:bg-white/5">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-xl border-white/10 hover:bg-white/5"
+                onClick={handleShare}
+                data-testid="button-share-script"
+              >
                 <Share2 className="w-5 h-5" />
               </Button>
               <Button 
@@ -229,9 +243,15 @@ export default function ScriptDetail() {
                   <p className="text-xs text-muted-foreground">{script.userId.slice(0, 8)}</p>
                 </div>
               </div>
-              <Button className="w-full gap-2 bg-primary hover:bg-primary/90">
-                <span>Follow Creator</span>
-              </Button>
+              {!isOwnProfile && (
+                <Button 
+                  className="w-full gap-2 bg-primary hover:bg-primary/90"
+                  onClick={() => window.location.href = `/creator/${script.userId}`}
+                  data-testid="button-follow-from-script"
+                >
+                  <span>Follow Creator</span>
+                </Button>
+              )}
               <Button variant="outline" className="w-full border-white/10 hover:bg-white/5" onClick={() => window.location.href = `/creator/${script.userId}`}>
                 View Profile
               </Button>
