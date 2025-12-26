@@ -347,14 +347,27 @@ export class DatabaseStorage implements IStorage {
 
   // Ratings & Reports
   async rateScript(scriptId: number, userId: string, rating: number, review?: string): Promise<Rating> {
-    const [rate] = await db.insert(ratings)
-      .values({ scriptId, userId, rating: Math.min(5, Math.max(1, rating)), review })
-      .onConflictDoUpdate({
-        target: [ratings.scriptId, ratings.userId],
-        set: { rating: Math.min(5, Math.max(1, rating)), review },
-      })
-      .returning();
-    return rate;
+    const cleanRating = Math.min(5, Math.max(1, rating));
+    
+    // Check if rating exists
+    const existing = await db.select().from(ratings)
+      .where(and(eq(ratings.scriptId, scriptId), eq(ratings.userId, userId)))
+      .limit(1);
+    
+    if (existing.length > 0) {
+      // Update existing
+      const [updated] = await db.update(ratings)
+        .set({ rating: cleanRating, review })
+        .where(and(eq(ratings.scriptId, scriptId), eq(ratings.userId, userId)))
+        .returning();
+      return updated;
+    } else {
+      // Insert new
+      const [newRate] = await db.insert(ratings)
+        .values({ scriptId, userId, rating: cleanRating, review })
+        .returning();
+      return newRate;
+    }
   }
 
   async reportScript(scriptId: number, reportedById: string, reason: string, description?: string): Promise<Report> {

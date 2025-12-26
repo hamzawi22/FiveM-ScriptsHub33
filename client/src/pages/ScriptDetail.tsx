@@ -273,8 +273,8 @@ export default function ScriptDetail() {
 
               <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
                 <DialogContent>
+                  <DialogTitle>Report Script</DialogTitle>
                   <DialogHeader>
-                    <DialogTitle>Report Script</DialogTitle>
                     <DialogDescription>
                       Help us keep the marketplace safe by reporting problematic scripts.
                     </DialogDescription>
