@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FiveM Script Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f0f1e;
+      --bg-card: #1a1a2e;
+      --text: #f5f5f5;
+      --text-muted: #a0a0a0;
+      --primary: #8c5ce6;
+      --primary-light: #a78bfa;
+      --accent: #00d4ff;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+    }
+
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      flex: 1;
+      margin-left: 2rem;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--accent);
+    }
+
+    .user-menu {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(140, 92, 230, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* Pages */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Home Page */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 4rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .stat-card {
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+    }
+
+    /* Scripts Grid */
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .script-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .script-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 15px 40px rgba(0, 212, 255, 0.1);
+    }
+
+    .script-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .script-desc {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .script-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .script-rating {
+      color: #ffd700;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .script-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .script-actions button {
+      flex: 1;
+      padding: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    /* Detail Page */
+    .detail-header {
+      background: linear-gradient(135deg, rgba(140, 92, 230, 0.2) 0%, rgba(0, 212, 255, 0.2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .detail-meta {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    .detail-content {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+
+    .detail-main {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+    }
+
+    .detail-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+
+    .sidebar-card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* Rating Section */
+    .rating-stars {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .star {
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .star:hover, .star.active {
+      color: #ffd700;
+      transform: scale(1.1);
+    }
+
+    /* Profile Page */
+    .profile-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      font-weight: 700;
+    }
+
+    .profile-info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+      color: var(--text-muted);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+    }
+
+    .modal-header {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(0, 212, 255, 0.05);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .detail-content {
+        grid-template-columns: 1fr;
+      }
+
+      .header-content {
+        flex-wrap: wrap;
+      }
+
+      nav {
+        margin-left: 0;
+        width: 100%;
+        gap: 1rem;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    .no-content {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo" onclick="app.navigate('home')">🎮 FiveM Marketplace</div>
+      <nav>
+        <a onclick="app.navigate('home')" class="nav-link active" data-page="home">Home</a>
+        <a onclick="app.navigate('scripts')" class="nav-link" data-page="scripts">Scripts</a>
+        <a onclick="app.navigate('profiles')" class="nav-link" data-page="profiles">Creators</a>
+      </nav>
+      <div class="user-menu">
+        <button class="btn-primary" onclick="app.toggleLogin()">
+          <span id="login-btn-text">Login</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Home Page -->
+    <div class="page active" data-page="home">
+      <section class="hero">
+        <h1>FiveM Script Marketplace</h1>
+        <p>Discover, share, and download the best FiveM scripts in the community</p>
+        <div class="cta-buttons">
+          <button class="btn-secondary" onclick="app.navigate('scripts')">Browse Scripts</button>
+          <button class="btn-primary" onclick="app.showModal('upload')">Upload Script</button>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="total-scripts">0</div>
+          <div class="stat-label">Scripts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="total-creators">0</div>
+          <div class="stat-label">Creators</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="total-downloads">0</div>
+          <div class="stat-label">Downloads</div>
+        </div>
+      </section>
+
+      <h2 style="margin-bottom: 2rem;">Featured Scripts</h2>
+      <div class="scripts-grid" id="featured-grid"></div>
+    </div>
+
+    <!-- Scripts Page -->
+    <div class="page" data-page="scripts">
+      <h1 style="margin-bottom: 2rem;">All Scripts</h1>
+      <div class="scripts-grid" id="scripts-grid"></div>
+    </div>
+
+    <!-- Script Detail Page -->
+    <div class="page" data-page="script-detail">
+      <div id="detail-container"></div>
+    </div>
+
+    <!-- Profiles Page -->
+    <div class="page" data-page="profiles">
+      <h1 style="margin-bottom: 2rem;">Creators</h1>
+      <div class="scripts-grid" id="creators-grid"></div>
+    </div>
+
+    <!-- Profile Detail Page -->
+    <div class="page" data-page="profile-detail">
+      <div id="profile-container"></div>
+    </div>
+  </main>
+
+  <!-- Login Modal -->
+  <div class="modal" id="login-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">×</button>
+      <div class="modal-header">Login</div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="Enter username...">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter password...">
+      </div>
+      <button class="btn-primary" style="width: 100%;" onclick="app.login()">Login</button>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal" id="upload-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">×</button>
+      <div class="modal-header">Upload Script</div>
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" id="upload-title" placeholder="Script name...">
+      </div>
+      <div class="form-group">
+        <label>Description *</label>
+        <textarea id="upload-desc" placeholder="Describe your script..." rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label>File URL *</label>
+        <input type="url" id="upload-url" placeholder="https://...">
+      </div>
+      <button class="btn-primary" style="width: 100%;" onclick="app.uploadScript()">Upload</button>
+    </div>
+  </div>
+
+  <!-- Rating Modal -->
+  <div class="modal" id="rating-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">×</button>
+      <div class="modal-header">Rate Script</div>
+      <label>Rating</label>
+      <div class="rating-stars" id="modal-stars">
+        <span class="star" data-value="1" onclick="app.setRating(1)">★</span>
+        <span class="star" data-value="2" onclick="app.setRating(2)">★</span>
+        <span class="star" data-value="3" onclick="app.setRating(3)">★</span>
+        <span class="star" data-value="4" onclick="app.setRating(4)">★</span>
+        <span class="star" data-value="5" onclick="app.setRating(5)">★</span>
+      </div>
+      <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="app.submitRating()">Submit Rating</button>
+    </div>
+  </div>
+
+  <script>
+    const app = {
+      currentUser: null,
+      currentScript: null,
+      currentProfile: null,
+      selectedRating: 0,
+      
+      scripts: [
+        { id: 1, title: "Job Management System", desc: "Comprehensive job system with multiple job types, progression, and rewards.", creator: "ServerMaster", views: 1890, downloads: 420, rating: 4.9, ratingCount: 38 },
+        { id: 2, title: "Custom Vehicle Tuning", desc: "Complete vehicle customization system with advanced tuning options.", creator: "SpeedDemon", views: 2100, downloads: 580, rating: 4.6, ratingCount: 62 },
+        { id: 3, title: "Advanced NPC Spawner", desc: "Powerful script to spawn and control NPCs with advanced AI behaviors.", creator: "DevGuru", views: 1250, downloads: 340, rating: 4.8, ratingCount: 45 },
+        { id: 4, title: "Advanced Banking Script", desc: "Full-featured banking system with accounts, transfers, loans, and security features.", creator: "FinancePro", views: 3200, downloads: 890, rating: 4.7, ratingCount: 94 },
+        { id: 5, title: "Weapon Management Pro", desc: "Advanced weapon system with custom attachments, damage scaling, and realistic mechanics.", creator: "WeaponSmith", views: 2450, downloads: 710, rating: 4.5, ratingCount: 71 },
+        { id: 6, title: "Housing System v2", desc: "Complete housing solution with rentals, ownership, decorations, and safe storage.", creator: "HouseBuilder", views: 4100, downloads: 1200, rating: 4.9, ratingCount: 156 }
+      ],
+
+      creators: [
+        { id: 1, name: "ServerMaster", bio: "Professional script developer", followers: 500, scripts: 12, rating: 4.8 },
+        { id: 2, name: "SpeedDemon", bio: "Vehicle systems specialist", followers: 300, scripts: 8, rating: 4.6 },
+        { id: 3, name: "DevGuru", bio: "Full-stack FiveM developer", followers: 450, scripts: 15, rating: 4.7 }
+      ],
+
+      init() {
+        this.renderScripts();
+        this.updateStats();
+      },
+
+      navigate(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelector(`[data-page="${page}"]`).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+        document.querySelector(`[data-page="${page}"]`).classList.add('active');
+
+        if (page === 'home') this.renderScripts('featured-grid', true);
+        if (page === 'scripts') this.renderScripts('scripts-grid');
+        if (page === 'profiles') this.renderCreators();
+      },
+
+      renderScripts(containerId = 'featured-grid', featured = false) {
+        const scripts = featured ? this.scripts.slice(0, 3) : this.scripts;
+        const container = document.getElementById(containerId);
+        container.innerHTML = scripts.map(s => `
+          <div class="script-card" onclick="app.viewScript(${s.id})">
+            <div class="script-title">${s.title}</div>
+            <div class="script-desc">${s.desc}</div>
+            <div class="script-meta">
+              <span>👁️ ${s.views}</span>
+              <span>⬇️ ${s.downloads}</span>
+              <span>👤 ${s.creator}</span>
+            </div>
+            <div class="script-rating">⭐ ${s.rating} (${s.ratingCount})</div>
+            <div class="script-actions">
+              <button class="btn-primary" onclick="event.stopPropagation(); app.download(${s.id})">Download</button>
+              <button class="btn-secondary" onclick="event.stopPropagation(); app.showModal('rating', ${s.id})">Rate</button>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      renderCreators() {
+        const container = document.getElementById('creators-grid');
+        container.innerHTML = this.creators.map(c => `
+          <div class="script-card" onclick="app.viewProfile(${c.id})">
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #8c5ce6, #00d4ff); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
+                ${c.name[0]}
+              </div>
+            </div>
+            <div class="script-title" style="text-align: center;">${c.name}</div>
+            <div class="script-desc" style="text-align: center;">${c.bio}</div>
+            <div class="script-rating" style="text-align: center;">⭐ ${c.rating}</div>
+            <div class="script-meta" style="justify-content: center; border: none;">
+              <span>${c.followers} Followers</span>
+              <span>${c.scripts} Scripts</span>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      viewScript(id) {
+        this.currentScript = this.scripts.find(s => s.id === id);
+        const html = `
+          <div class="detail-header">
+            <h1 class="detail-title">${this.currentScript.title}</h1>
+            <div class="detail-meta">
+              <span>👁️ ${this.currentScript.views} Views</span>
+              <span>⬇️ ${this.currentScript.downloads} Downloads</span>
+              <span>👤 ${this.currentScript.creator}</span>
+            </div>
+          </div>
+          <div class="detail-content">
+            <div class="detail-main">
+              <h2>Description</h2>
+              <p>${this.currentScript.desc}</p>
+            </div>
+            <div class="detail-sidebar">
+              <div class="sidebar-card">
+                <h3>⭐ Rating</h3>
+                <div class="script-rating">${this.currentScript.rating} (${this.currentScript.ratingCount} ratings)</div>
+                <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="app.showModal('rating', ${this.currentScript.id})">Rate This Script</button>
+              </div>
+              <div class="sidebar-card">
+                <h3>Creator</h3>
+                <p style="margin-bottom: 1rem;">${this.currentScript.creator}</p>
+                <button class="btn-primary" style="width: 100%;" onclick="app.navigate('profile-detail')">View Profile</button>
+              </div>
+              <div class="sidebar-card">
+                <button class="btn-primary" style="width: 100%; padding: 1rem;" onclick="app.download(${this.currentScript.id})">⬇️ Download</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('detail-container').innerHTML = html;
+        this.navigate('script-detail');
+      },
+
+      viewProfile(id) {
+        this.currentProfile = this.creators.find(c => c.id === id);
+        const html = `
+          <div class="profile-header">
+            <div class="profile-avatar">${this.currentProfile.name[0]}</div>
+            <div class="profile-info">
+              <h1>${this.currentProfile.name}</h1>
+              <p style="color: var(--text-muted); margin-bottom: 1rem;">${this.currentProfile.bio}</p>
+              <div class="profile-stats">
+                <div><strong>${this.currentProfile.followers}</strong> Followers</div>
+                <div><strong>${this.currentProfile.scripts}</strong> Scripts</div>
+                <div>⭐ <strong>${this.currentProfile.rating}</strong> Rating</div>
+              </div>
+              <button class="btn-primary" style="margin-top: 1rem;">Follow</button>
+            </div>
+          </div>
+          <h2 style="margin: 2rem 0 1rem;">Scripts by ${this.currentProfile.name}</h2>
+          <div class="scripts-grid">
+            ${this.scripts.filter(s => s.creator === this.currentProfile.name).map(s => `
+              <div class="script-card" onclick="app.viewScript(${s.id})">
+                <div class="script-title">${s.title}</div>
+                <div class="script-desc">${s.desc}</div>
+                <div class="script-rating">⭐ ${s.rating}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        document.getElementById('profile-container').innerHTML = html;
+        this.navigate('profile-detail');
+      },
+
+      updateStats() {
+        document.getElementById('total-scripts').textContent = this.scripts.length;
+        document.getElementById('total-creators').textContent = this.creators.length;
+        document.getElementById('total-downloads').textContent = this.scripts.reduce((a, s) => a + s.downloads, 0);
+      },
+
+      download(scriptId) {
+        const script = this.scripts.find(s => s.id === scriptId);
+        alert(`Downloading: ${script.title}`);
+        script.downloads++;
+        this.updateStats();
+      },
+
+      showModal(type, scriptId = null) {
+        this.closeModal();
+        if (type === 'upload') {
+          if (!this.currentUser) {
+            alert('Please login first');
+            this.toggleLogin();
+            return;
+          }
+          document.getElementById('upload-modal').classList.add('active');
+        }
+        if (type === 'rating') {
+          if (!this.currentUser) {
+            alert('Please login first');
+            this.toggleLogin();
+            return;
+          }
+          this.currentScript = this.scripts.find(s => s.id === scriptId);
+          document.getElementById('rating-modal').classList.add('active');
+        }
+      },
+
+      setRating(rating) {
+        this.selectedRating = rating;
+        document.querySelectorAll('#modal-stars .star').forEach((star, idx) => {
+          star.classList.toggle('active', idx < rating);
+        });
+      },
+
+      submitRating() {
+        if (this.selectedRating === 0) {
+          alert('Please select a rating');
+          return;
+        }
+        this.currentScript.ratingCount++;
+        this.currentScript.rating = ((this.currentScript.rating * (this.currentScript.ratingCount - 1)) + this.selectedRating) / this.currentScript.ratingCount;
+        alert(`Thanks for rating ${this.currentScript.title}!`);
+        this.closeModal();
+        this.renderScripts();
+      },
+
+      uploadScript() {
+        const title = document.getElementById('upload-title').value;
+        const desc = document.getElementById('upload-desc').value;
+        const url = document.getElementById('upload-url').value;
+
+        if (!title || !desc || !url) {
+          alert('Please fill all fields');
+          return;
+        }
+
+        const newScript = {
+          id: this.scripts.length + 1,
+          title,
+          desc,
+          creator: this.currentUser || 'Anonymous',
+          views: 0,
+          downloads: 0,
+          rating: 0,
+          ratingCount: 0
+        };
+
+        this.scripts.push(newScript);
+        alert('Script uploaded successfully!');
+        this.closeModal();
+        this.renderScripts();
+        this.updateStats();
+      },
+
+      toggleLogin() {
+        document.getElementById('login-modal').classList.add('active');
+      },
+
+      login() {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+
+        if (!username || !password) {
+          alert('Please enter username and password');
+          return;
+        }
+
+        this.currentUser = username;
+        document.getElementById('login-btn-text').textContent = `${username}`;
+        this.closeModal();
+      },
+
+      closeModal() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      }
+    };
+
+    app.init();
+  </script>
+</body>
+</html>
