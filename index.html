@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FiveM Script Marketplace</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(20, 20, 35, 0.95);
+      border-bottom: 1px solid rgba(100, 150, 200, 0.2);
+      padding: 1.5rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #00d4ff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      color: #00d4ff;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #00d4ff, #0099ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #b0b0b0;
+      margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00d4ff, #0099ff);
+      color: #1a1a2e;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid #00d4ff;
+      color: #00d4ff;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    .scripts-section {
+      margin-top: 4rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      animation: fadeIn 0.8s ease 0.2s both;
+    }
+
+    .script-card {
+      background: linear-gradient(135deg, rgba(30, 40, 60, 0.8), rgba(20, 30, 50, 0.8));
+      border: 1px solid rgba(100, 150, 200, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .script-card:hover {
+      border-color: rgba(0, 212, 255, 0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+    }
+
+    .script-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+
+    .script-desc {
+      font-size: 0.95rem;
+      color: #b0b0b0;
+      margin-bottom: 1rem;
+      min-height: 2.5rem;
+    }
+
+    .script-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(100, 150, 200, 0.1);
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .script-rating {
+      color: #ffd700;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+
+    .download-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #00d4ff, #0099ff);
+      color: #1a1a2e;
+      padding: 0.7rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .download-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 4rem 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 100, 200, 0.1));
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #00d4ff;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #b0b0b0;
+      font-size: 1rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #00d4ff;
+    }
+
+    .modal-close {
+      float: left;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #888;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: -0.5rem 0 0 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #e0e0e0;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      background: rgba(30, 40, 60, 0.8);
+      border: 1px solid rgba(100, 150, 200, 0.2);
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #00d4ff;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+    }
+
+    .stars {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .star {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #555;
+      transition: all 0.2s ease;
+    }
+
+    .star:hover,
+    .star.active {
+      color: #ffd700;
+    }
+
+    footer {
+      background: rgba(20, 20, 35, 0.95);
+      border-top: 1px solid rgba(100, 150, 200, 0.2);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+      color: #888;
+    }
+
+    .no-scripts {
+      text-align: center;
+      padding: 3rem;
+      color: #888;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      nav {
+        gap: 1rem;
+      }
+
+      .scripts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">💾 FiveM Marketplace</div>
+      <nav>
+        <a onclick="scrollToScripts()">Scripts</a>
+        <a onclick="scrollToStats()">Stats</a>
+        <a onclick="openUploadModal()">Upload</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>FiveM Script Marketplace</h1>
+      <p>Discover, share, and download the best FiveM scripts in the community</p>
+      <div class="cta-buttons">
+        <button class="btn-primary" onclick="scrollToScripts()">Browse Scripts</button>
+        <button class="btn-secondary" onclick="openUploadModal()">Upload Script</button>
+      </div>
+    </section>
+
+    <section class="stats-section" id="stats-section">
+      <div class="stat-card">
+        <div class="stat-number" id="total-scripts">0</div>
+        <div class="stat-label">Scripts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="total-downloads">0</div>
+        <div class="stat-label">Downloads</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="total-creators">0</div>
+        <div class="stat-label">Creators</div>
+      </div>
+    </section>
+
+    <section class="scripts-section" id="scripts-section">
+      <h2 class="section-title">Featured Scripts</h2>
+      <div class="scripts-grid" id="scripts-grid">
+        <div class="no-scripts">Loading scripts...</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="ratingModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeRatingModal()">×</button>
+      <div class="modal-header">Rate Script</div>
+      <div class="form-group">
+        <label>Rating</label>
+        <div class="stars" id="rating-stars">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Review (Optional)</label>
+        <textarea id="review-text" placeholder="Share your thoughts..."></textarea>
+      </div>
+      <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="submitRating()">Submit Rating</button>
+    </div>
+  </div>
+
+  <div class="modal" id="uploadModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeUploadModal()">×</button>
+      <div class="modal-header">Upload Script</div>
+      <div class="form-group">
+        <label>Script Title</label>
+        <input type="text" id="script-title" placeholder="Enter script name...">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="script-desc" placeholder="Describe your script..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Script File (URL)</label>
+        <input type="url" id="script-url" placeholder="https://...">
+      </div>
+      <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="submitScript()">Upload Script</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 FiveM Script Marketplace. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Sample data (replace with API calls)
+    let scripts = [
+      {
+        id: 1,
+        title: "Advanced NPC Spawner",
+        description: "Powerful script to spawn and control NPCs with advanced AI behaviors and custom interactions.",
+        creator: "DevGuru",
+        views: 1250,
+        downloads: 340,
+        rating: 4.8,
+        ratingCount: 45,
+        category: "Utilities"
+      },
+      {
+        id: 2,
+        title: "Custom Vehicle Tuning",
+        description: "Complete vehicle customization system with advanced tuning options and save/load functionality.",
+        creator: "SpeedDemon",
+        views: 2100,
+        downloads: 580,
+        rating: 4.6,
+        ratingCount: 62,
+        category: "Vehicles"
+      },
+      {
+        id: 3,
+        title: "Job Management System",
+        description: "Comprehensive job system for servers with multiple job types, progression, and rewards.",
+        creator: "ServerMaster",
+        views: 1890,
+        downloads: 420,
+        rating: 4.9,
+        ratingCount: 38,
+        category: "Systems"
+      },
+      {
+        id: 4,
+        title: "Advanced Banking Script",
+        description: "Full-featured banking system with accounts, transfers, loans, and security features.",
+        creator: "FinancePro",
+        views: 3200,
+        downloads: 890,
+        rating: 4.7,
+        ratingCount: 94,
+        category: "Economy"
+      },
+      {
+        id: 5,
+        title: "Weapon Management Pro",
+        description: "Advanced weapon system with custom attachments, damage scaling, and realistic mechanics.",
+        creator: "WeaponSmith",
+        views: 2450,
+        downloads: 710,
+        rating: 4.5,
+        ratingCount: 71,
+        category: "Combat"
+      },
+      {
+        id: 6,
+        title: "Housing System v2",
+        description: "Complete housing solution with rentals, ownership, decorations, and safe storage.",
+        creator: "HouseBuilder",
+        views: 4100,
+        downloads: 1200,
+        rating: 4.9,
+        ratingCount: 156,
+        category: "Housing"
+      }
+    ];
+
+    let currentScriptId = null;
+    let selectedRating = 0;
+
+    function initPage() {
+      renderScripts();
+      updateStats();
+      setupRatingStars();
+    }
+
+    function renderScripts() {
+      const grid = document.getElementById('scripts-grid');
+      if (scripts.length === 0) {
+        grid.innerHTML = '<div class="no-scripts">No scripts available yet.</div>';
+        return;
+      }
+
+      grid.innerHTML = scripts.map(script => `
+        <div class="script-card">
+          <div class="script-title">${script.title}</div>
+          <div class="script-desc">${script.description}</div>
+          <div class="script-stats">
+            <div class="stat">👁️ ${script.views}</div>
+            <div class="stat">⬇️ ${script.downloads}</div>
+            <div class="stat">👤 ${script.creator}</div>
+          </div>
+          <div class="script-rating">⭐ ${script.rating} (${script.ratingCount} ratings)</div>
+          <button class="download-btn" onclick="downloadScript(${script.id})">Download Script</button>
+          <button class="download-btn" style="background: rgba(255, 215, 0, 0.3); color: #ffd700; margin-top: 0.5rem;" onclick="openRatingModal(${script.id})">Rate Script</button>
+        </div>
+      `).join('');
+    }
+
+    function updateStats() {
+      const totalDownloads = scripts.reduce((sum, s) => sum + s.downloads, 0);
+      const uniqueCreators = new Set(scripts.map(s => s.creator)).size;
+
+      document.getElementById('total-scripts').textContent = scripts.length;
+      document.getElementById('total-downloads').textContent = totalDownloads.toLocaleString();
+      document.getElementById('total-creators').textContent = uniqueCreators;
+    }
+
+    function downloadScript(scriptId) {
+      const script = scripts.find(s => s.id === scriptId);
+      if (script) {
+        alert(`Downloading: ${script.title}\n\nURL: ${script.url || 'Not available'}`);
+        // In a real app, this would trigger actual download
+      }
+    }
+
+    function openRatingModal(scriptId) {
+      currentScriptId = scriptId;
+      selectedRating = 0;
+      document.getElementById('ratingModal').classList.add('active');
+      document.getElementById('review-text').value = '';
+      updateStarDisplay();
+    }
+
+    function closeRatingModal() {
+      document.getElementById('ratingModal').classList.remove('active');
+      currentScriptId = null;
+    }
+
+    function setupRatingStars() {
+      const stars = document.querySelectorAll('#rating-stars .star');
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+          selectedRating = parseInt(star.dataset.value);
+          updateStarDisplay();
+        });
+        star.addEventListener('mouseover', () => {
+          const hoverValue = parseInt(star.dataset.value);
+          stars.forEach((s, idx) => {
+            s.classList.toggle('active', idx < hoverValue);
+          });
+        });
+      });
+      document.getElementById('rating-stars').addEventListener('mouseleave', updateStarDisplay);
+    }
+
+    function updateStarDisplay() {
+      const stars = document.querySelectorAll('#rating-stars .star');
+      stars.forEach((star, idx) => {
+        star.classList.toggle('active', idx < selectedRating);
+      });
+    }
+
+    function submitRating() {
+      if (selectedRating === 0) {
+        alert('Please select a rating');
+        return;
+      }
+      const review = document.getElementById('review-text').value;
+      const script = scripts.find(s => s.id === currentScriptId);
+      if (script) {
+        script.ratingCount++;
+        script.rating = ((script.rating * (script.ratingCount - 1)) + selectedRating) / script.ratingCount;
+        alert(`Thank you for rating "${script.title}" with ${selectedRating} stars!`);
+        closeRatingModal();
+        renderScripts();
+      }
+    }
+
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.add('active');
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.remove('active');
+    }
+
+    function submitScript() {
+      const title = document.getElementById('script-title').value;
+      const desc = document.getElementById('script-desc').value;
+      const url = document.getElementById('script-url').value;
+
+      if (!title || !desc || !url) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      const newScript = {
+        id: scripts.length + 1,
+        title,
+        description: desc,
+        creator: "Anonymous",
+        views: 0,
+        downloads: 0,
+        rating: 0,
+        ratingCount: 0,
+        url
+      };
+
+      scripts.push(newScript);
+      alert('Script uploaded successfully!');
+      closeUploadModal();
+      document.getElementById('script-title').value = '';
+      document.getElementById('script-desc').value = '';
+      document.getElementById('script-url').value = '';
+      renderScripts();
+      updateStats();
+    }
+
+    function scrollToScripts() {
+      document.getElementById('scripts-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function scrollToStats() {
+      document.getElementById('stats-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+      const ratingModal = document.getElementById('ratingModal');
+      const uploadModal = document.getElementById('uploadModal');
+      if (event.target === ratingModal) ratingModal.classList.remove('active');
+      if (event.target === uploadModal) uploadModal.classList.remove('active');
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>
