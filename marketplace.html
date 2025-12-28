@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FiveM Script Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f0f1e;
+      --bg-card: #1a1a2e;
+      --bg-hover: #252540;
+      --text: #f5f5f5;
+      --text-muted: #a0a0a0;
+      --text-secondary: #7a7a8e;
+      --primary: #8c5ce6;
+      --primary-light: #a78bfa;
+      --primary-dark: #6d3fa3;
+      --accent: #00d4ff;
+      --accent-dark: #00a8cc;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: rgba(255, 255, 255, 0.1);
+      --border-light: rgba(255, 255, 255, 0.05);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.25rem; }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    a:hover {
+      color: var(--accent-dark);
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      position: relative;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--accent);
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    .user-menu {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(140, 92, 230, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    .btn-small {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: none;
+    }
+
+    .btn-ghost:hover {
+      background: var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    /* Main */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 80px);
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, rgba(140, 92, 230, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-hover);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 15px 40px rgba(0, 212, 255, 0.1);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .card-rating {
+      color: #ffd700;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .card-actions button {
+      flex: 1;
+      padding: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    /* Detail Section */
+    .detail-header {
+      background: linear-gradient(135deg, rgba(140, 92, 230, 0.2) 0%, rgba(0, 212, 255, 0.2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .detail-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .detail-meta {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .detail-content {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 2rem;
+    }
+
+    .detail-main {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+    }
+
+    .detail-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+
+    .sidebar-card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* Rating Stars */
+    .rating-stars {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .star {
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .star:hover, .star.active {
+      color: #ffd700;
+      transform: scale(1.2);
+    }
+
+    /* Profile Header */
+    .profile-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .profile-info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .profile-stats strong {
+      color: var(--accent);
+    }
+
+    .profile-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 0.25rem 0.75rem;
+      border-radius: 2rem;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.9rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(0, 212, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    /* Alert */
+    .alert {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--warning);
+      color: var(--warning);
+    }
+
+    .alert-info {
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      background: var(--border);
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .badge-primary {
+      background: rgba(140, 92, 230, 0.2);
+      border: 1px solid var(--primary);
+      color: var(--primary-light);
+    }
+
+    .badge-accent {
+      background: rgba(0, 212, 255, 0.2);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .tabs button {
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .tabs button:hover {
+      color: var(--accent);
+    }
+
+    .tabs button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Table */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    thead {
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+    }
+
+    th {
+      padding: 1rem;
+      text-align: right;
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:hover {
+      background: var(--bg-hover);
+    }
+
+    /* Loading */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .detail-content {
+        grid-template-columns: 1fr;
+      }
+
+      .header-content {
+        flex-wrap: wrap;
+      }
+
+      nav {
+        width: 100%;
+        gap: 0.5rem;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        font-size: 2.5rem;
+      }
+
+      .detail-header {
+        padding: 1.5rem;
+      }
+
+      .detail-title {
+        font-size: 2rem;
+      }
+
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.5rem; }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        padding: 1rem;
+      }
+    }
+
+    .no-content {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .verification-requirements {
+      background: var(--bg-hover);
+      border-left: 3px solid var(--accent);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .requirement {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      align-items: center;
+    }
+
+    .requirement-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .requirement-check.met {
+      background: var(--success);
+      color: white;
+    }
+
+    .requirement-check.unmet {
+      background: var(--danger);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="logo" onclick="app.navigate('home')">🎮 FiveM Marketplace</div>
+      <nav>
+        <a class="nav-link active" data-page="home" onclick="app.navigate('home')">الرئيسية</a>
+        <a class="nav-link" data-page="scripts" onclick="app.navigate('scripts')">السكريبتات</a>
+        <a class="nav-link" data-page="creators" onclick="app.navigate('creators')">المبدعون</a>
+        <a class="nav-link" data-page="search" onclick="app.navigate('search')">البحث</a>
+      </nav>
+      <div class="user-menu">
+        <button class="btn btn-small" id="login-btn" onclick="app.showModal('login')">تسجيل دخول</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main>
+    <!-- Home Page -->
+    <div class="page active" data-page="home">
+      <section class="hero">
+        <h1>مرحباً بك في سوق FiveM</h1>
+        <p>اكتشف وشارك أفضل سكريبتات FiveM في المجتمع</p>
+        <div class="cta-buttons">
+          <button class="btn-secondary" onclick="app.navigate('scripts')">استعرض السكريبتات</button>
+          <button class="btn" onclick="app.showModal('upload')">رفع سكريبت</button>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="total-scripts">0</div>
+          <div class="stat-label">سكريبت</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="total-creators">0</div>
+          <div class="stat-label">مبدع</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="total-downloads">0</div>
+          <div class="stat-label">تحميل</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="total-views">0</div>
+          <div class="stat-label">مشاهدة</div>
+        </div>
+      </section>
+
+      <h2 style="margin-bottom: 2rem;">السكريبتات المميزة</h2>
+      <div class="grid" id="featured-grid"></div>
+    </div>
+
+    <!-- Scripts Page -->
+    <div class="page" data-page="scripts">
+      <h1 style="margin-bottom: 2rem;">كل السكريبتات</h1>
+      <div style="margin-bottom: 2rem;">
+        <input type="text" id="search-scripts" placeholder="ابحث عن سكريبت..." style="width: 100%; max-width: 400px; padding: 0.8rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 0.5rem; color: var(--text);" onkeyup="app.filterScripts()">
+      </div>
+      <div class="grid" id="scripts-grid"></div>
+    </div>
+
+    <!-- Script Detail -->
+    <div class="page" data-page="script-detail">
+      <div id="detail-container"></div>
+    </div>
+
+    <!-- Creators Page -->
+    <div class="page" data-page="creators">
+      <h1 style="margin-bottom: 2rem;">المبدعون</h1>
+      <div class="grid" id="creators-grid"></div>
+    </div>
+
+    <!-- Creator Profile -->
+    <div class="page" data-page="creator">
+      <div id="creator-container"></div>
+    </div>
+
+    <!-- Search Page -->
+    <div class="page" data-page="search">
+      <h1 style="margin-bottom: 2rem;">البحث عن المبدعين</h1>
+      <div style="margin-bottom: 2rem;">
+        <input type="text" id="search-creators" placeholder="ابحث عن مبدع..." style="width: 100%; max-width: 500px; padding: 0.8rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 0.5rem; color: var(--text);" onkeyup="app.searchCreators()">
+      </div>
+      <div class="grid" id="search-results"></div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="page" data-page="dashboard">
+      <h1 style="margin-bottom: 2rem;">لوحة التحكم</h1>
+      <div id="dashboard-container"></div>
+    </div>
+
+    <!-- Earnings -->
+    <div class="page" data-page="earnings">
+      <h1 style="margin-bottom: 2rem;">الأرباح والتحقق</h1>
+      <div id="earnings-container"></div>
+    </div>
+  </main>
+
+  <!-- Login Modal -->
+  <div class="modal" id="login-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">✕</button>
+      <div class="modal-header">تسجيل الدخول</div>
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="login-username" placeholder="أدخل اسم المستخدم...">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="login-password" placeholder="أدخل كلمة المرور...">
+      </div>
+      <button class="btn" style="width: 100%;" onclick="app.login()">تسجيل دخول</button>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal" id="upload-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">✕</button>
+      <div class="modal-header">رفع سكريبت</div>
+      <div class="form-group">
+        <label>العنوان *</label>
+        <input type="text" id="upload-title" placeholder="اسم السكريبت...">
+      </div>
+      <div class="form-group">
+        <label>الوصف *</label>
+        <textarea id="upload-desc" placeholder="صف السكريبت..." rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label>رابط الملف *</label>
+        <input type="url" id="upload-url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>مدة التوفر</label>
+        <select id="upload-duration">
+          <option value="day">يوم واحد</option>
+          <option value="week" selected>أسبوع</option>
+          <option value="month">شهر</option>
+        </select>
+      </div>
+      <button class="btn" style="width: 100%;" onclick="app.uploadScript()">رفع</button>
+    </div>
+  </div>
+
+  <!-- Rating Modal -->
+  <div class="modal" id="rating-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">✕</button>
+      <div class="modal-header">تقييم السكريبت</div>
+      <label style="display: block; margin-bottom: 1rem;">التقييم</label>
+      <div class="rating-stars" id="modal-stars">
+        <span class="star" data-value="1" onclick="app.setRating(1)">★</span>
+        <span class="star" data-value="2" onclick="app.setRating(2)">★</span>
+        <span class="star" data-value="3" onclick="app.setRating(3)">★</span>
+        <span class="star" data-value="4" onclick="app.setRating(4)">★</span>
+        <span class="star" data-value="5" onclick="app.setRating(5)">★</span>
+      </div>
+      <div class="form-group">
+        <label>التعليق</label>
+        <textarea id="rating-review" placeholder="شارك رأيك..." rows="3"></textarea>
+      </div>
+      <button class="btn" style="width: 100%;" onclick="app.submitRating()">إرسال التقييم</button>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div class="modal" id="report-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="app.closeModal()">✕</button>
+      <div class="modal-header">إبلاغ عن السكريبت</div>
+      <div class="form-group">
+        <label>السبب *</label>
+        <select id="report-reason">
+          <option value="">اختر السبب</option>
+          <option value="malware">برامج ضارة</option>
+          <option value="spam">بريد عشوائي</option>
+          <option value="stolen">مسروق</option>
+          <option value="broken">معطوب</option>
+          <option value="offensive">محتوى مسيء</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>الوصف</label>
+        <textarea id="report-desc" placeholder="صف المشكلة..." rows="4"></textarea>
+      </div>
+      <button class="btn btn-danger" style="width: 100%;" onclick="app.submitReport()">إرسال البلاغ</button>
+    </div>
+  </div>
+
+  <script>
+    const app = {
+      // State
+      currentUser: null,
+      currentScript: null,
+      currentCreator: null,
+      selectedRating: 0,
+      scripts: [],
+      creators: [],
+      users: {},
+
+      // Data Models
+      sampleScripts: [
+        {
+          id: 1,
+          title: 'نظام الوظائف المتقدم',
+          description: 'نظام وظائف شامل مع عدة أنواع وظائف وتقدم وأرباح.',
+          creator: 'ServerMaster',
+          creatorId: 1,
+          views: 1890,
+          downloads: 420,
+          rating: 4.9,
+          ratingCount: 38,
+          coins: 5,
+          hasFxManifest: true,
+          duration: 'week'
+        },
+        {
+          id: 2,
+          title: 'تخصيص المركبات المتقدم',
+          description: 'نظام تخصيص شامل للمركبات مع خيارات تخصيص متقدمة.',
+          creator: 'SpeedDemon',
+          creatorId: 2,
+          views: 2100,
+          downloads: 580,
+          rating: 4.6,
+          ratingCount: 62,
+          coins: 5,
+          hasFxManifest: true,
+          duration: 'week'
+        },
+        {
+          id: 3,
+          title: 'نظام المصرف المتقدم',
+          description: 'حل بنكي كامل مع حسابات وتحويلات وقروض وميزات أمان.',
+          creator: 'FinancePro',
+          creatorId: 3,
+          views: 3200,
+          downloads: 890,
+          rating: 4.7,
+          ratingCount: 94,
+          coins: 5,
+          hasFxManifest: true,
+          duration: 'month'
+        },
+        {
+          id: 4,
+          title: 'إدارة الأسلحة المتقدمة',
+          description: 'نظام أسلحة متقدم مع ملحقات مخصصة ومنطق واقعي.',
+          creator: 'WeaponSmith',
+          creatorId: 4,
+          views: 2450,
+          downloads: 710,
+          rating: 4.5,
+          ratingCount: 71,
+          coins: 5,
+          hasFxManifest: true,
+          duration: 'week'
+        },
+        {
+          id: 5,
+          title: 'نظام الإسكان v2',
+          description: 'حل إسكان شامل مع إيجارات وملكية وتزيين وتخزين آمن.',
+          creator: 'HouseBuilder',
+          creatorId: 5,
+          views: 4100,
+          downloads: 1200,
+          rating: 4.9,
+          ratingCount: 156,
+          coins: 5,
+          hasFxManifest: true,
+          duration: 'month'
+        }
+      ],
+
+      sampleCreators: [
+        {
+          id: 1,
+          name: 'ServerMaster',
+          bio: 'مطور سكريبتات احترافي',
+          followers: 500,
+          scripts: 12,
+          rating: 4.8,
+          isVerified: true,
+          trustScore: 95,
+          coins: 2500,
+          earnings: 12500
+        },
+        {
+          id: 2,
+          name: 'SpeedDemon',
+          bio: 'متخصص في أنظمة المركبات',
+          followers: 300,
+          scripts: 8,
+          rating: 4.6,
+          isVerified: true,
+          trustScore: 88,
+          coins: 1800,
+          earnings: 9000
+        },
+        {
+          id: 3,
+          name: 'FinancePro',
+          bio: 'مطور أنظمة مالية متقدمة',
+          followers: 450,
+          scripts: 15,
+          rating: 4.7,
+          isVerified: true,
+          trustScore: 92,
+          coins: 3200,
+          earnings: 16000
+        },
+        {
+          id: 4,
+          name: 'WeaponSmith',
+          bio: 'متخصص في أنظمة الأسلحة',
+          followers: 280,
+          scripts: 6,
+          rating: 4.5,
+          isVerified: false,
+          trustScore: 85,
+          coins: 1400,
+          earnings: 7000
+        },
+        {
+          id: 5,
+          name: 'HouseBuilder',
+          bio: 'مطور أنظمة الإسكان والممتلكات',
+          followers: 600,
+          scripts: 18,
+          rating: 4.9,
+          isVerified: true,
+          trustScore: 98,
+          coins: 5000,
+          earnings: 25000
+        }
+      ],
+
+      init() {
+        this.scripts = [...this.sampleScripts];
+        this.creators = [...this.sampleCreators];
+        this.updateStats();
+        this.renderScripts();
+        this.renderCreators();
+      },
+
+      navigate(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelector(`[data-page="${page}"]`).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+        document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+
+        window.scrollTo(0, 0);
+
+        if (page === 'home') this.renderScripts('featured-grid', true);
+        if (page === 'scripts') this.renderScripts('scripts-grid');
+        if (page === 'creators') this.renderCreators();
+      },
+
+      renderScripts(containerId = 'featured-grid', featured = false) {
+        const scripts = featured ? this.scripts.slice(0, 4) : this.scripts;
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = scripts.map(s => `
+          <div class="card" onclick="app.viewScript(${s.id})">
+            <div class="card-title">${s.title}</div>
+            <div class="card-desc">${s.description}</div>
+            <div class="card-meta">
+              <span>👁️ ${s.views}</span>
+              <span>⬇️ ${s.downloads}</span>
+              <span>${s.hasFxManifest ? '✅' : '❌'} FxManifest</span>
+            </div>
+            <div class="card-rating">⭐ ${s.rating} (${s.ratingCount})</div>
+            <div class="card-actions">
+              <button class="btn btn-small" onclick="event.stopPropagation(); app.download(${s.id})">تحميل</button>
+              <button class="btn-secondary btn-small" onclick="event.stopPropagation(); app.showModal('rating', ${s.id})">تقييم</button>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      renderCreators() {
+        const container = document.getElementById('creators-grid');
+        if (!container) return;
+
+        container.innerHTML = this.creators.map(c => `
+          <div class="card" onclick="app.viewCreator(${c.id})">
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <div class="profile-avatar" style="width: 100px; height: 100px; margin: 0 auto;">${c.name[0]}</div>
+            </div>
+            <div class="card-title" style="text-align: center;">${c.name}</div>
+            <div class="card-desc" style="text-align: center;">${c.bio}</div>
+            ${c.isVerified ? '<div class="profile-badge">✓ موثق</div>' : ''}
+            <div class="card-rating" style="text-align: center;">⭐ ${c.rating}</div>
+            <div class="card-meta" style="justify-content: center; border: none;">
+              <span>👥 ${c.followers}</span>
+              <span>📁 ${c.scripts}</span>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      filterScripts() {
+        const search = document.getElementById('search-scripts')?.value || '';
+        const filtered = this.scripts.filter(s => 
+          s.title.includes(search) || s.description.includes(search)
+        );
+        const container = document.getElementById('scripts-grid');
+        container.innerHTML = filtered.map(s => `
+          <div class="card" onclick="app.viewScript(${s.id})">
+            <div class="card-title">${s.title}</div>
+            <div class="card-desc">${s.description}</div>
+            <div class="card-meta">
+              <span>👁️ ${s.views}</span>
+              <span>⬇️ ${s.downloads}</span>
+            </div>
+            <div class="card-rating">⭐ ${s.rating}</div>
+            <div class="card-actions">
+              <button class="btn btn-small" onclick="event.stopPropagation(); app.download(${s.id})">تحميل</button>
+              <button class="btn-secondary btn-small" onclick="event.stopPropagation(); app.showModal('rating', ${s.id})">تقييم</button>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      viewScript(id) {
+        this.currentScript = this.scripts.find(s => s.id === id);
+        if (!this.currentScript) return;
+
+        const creator = this.creators.find(c => c.id === this.currentScript.creatorId);
+        const html = `
+          <div class="detail-header">
+            <h1 class="detail-title">${this.currentScript.title}</h1>
+            <div class="detail-meta">
+              <span>👁️ ${this.currentScript.views} مشاهدة</span>
+              <span>⬇️ ${this.currentScript.downloads} تحميل</span>
+              <span>👤 ${this.currentScript.creator}</span>
+              <span>${this.currentScript.hasFxManifest ? '✅ يحتوي على fxmanifest.lua' : '❌ بدون fxmanifest.lua'}</span>
+            </div>
+          </div>
+          <div class="detail-content">
+            <div class="detail-main">
+              <h2>الوصف</h2>
+              <p style="margin-bottom: 2rem;">${this.currentScript.description}</p>
+              
+              <h3 style="margin-top: 2rem;">التقييمات</h3>
+              <div class="card-rating">⭐ ${this.currentScript.rating} من ${this.currentScript.ratingCount} تقييم</div>
+              
+              <h3 style="margin-top: 2rem;">التفاصيل</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                  <strong>المبدع:</strong><br>${this.currentScript.creator}
+                </div>
+                <div>
+                  <strong>المدة:</strong><br>${this.currentScript.duration === 'day' ? 'يوم' : this.currentScript.duration === 'week' ? 'أسبوع' : 'شهر'}
+                </div>
+                <div>
+                  <strong>الأرباح:</strong><br>${this.currentScript.coins} كوين لكل تحميل
+                </div>
+              </div>
+            </div>
+            <div class="detail-sidebar">
+              <div class="sidebar-card">
+                <h3>⭐ التقييم</h3>
+                <div class="card-rating">${this.currentScript.rating}</div>
+                <button class="btn" style="width: 100%; margin-top: 1rem;" onclick="app.showModal('rating', ${this.currentScript.id})">تقييم هذا السكريبت</button>
+              </div>
+              <div class="sidebar-card">
+                <h3>المبدع</h3>
+                <p style="margin-bottom: 1rem;">${this.currentScript.creator}</p>
+                ${creator ? `
+                  <p style="color: var(--text-muted); margin-bottom: 1rem;">⭐ ${creator.rating} rating</p>
+                  ${creator.isVerified ? '<div class="profile-badge">✓ موثق</div>' : ''}
+                ` : ''}
+                <button class="btn" style="width: 100%; margin-top: 1rem;" onclick="app.viewCreator(${this.currentScript.creatorId})">عرض البروفايل</button>
+              </div>
+              <div class="sidebar-card">
+                <button class="btn" style="width: 100%; padding: 1rem; margin-bottom: 0.5rem;" onclick="app.download(${this.currentScript.id})">⬇️ تحميل</button>
+                <button class="btn-secondary" style="width: 100%; margin-top: 0.5rem;" onclick="app.showModal('report', ${this.currentScript.id})">🚩 إبلاغ</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('detail-container').innerHTML = html;
+        this.navigate('script-detail');
+      },
+
+      viewCreator(id) {
+        this.currentCreator = this.creators.find(c => c.id === id);
+        if (!this.currentCreator) return;
+
+        const creatorScripts = this.scripts.filter(s => s.creatorId === id);
+        const html = `
+          <div class="profile-header">
+            <div class="profile-avatar">${this.currentCreator.name[0]}</div>
+            <div class="profile-info">
+              <h1>${this.currentCreator.name}</h1>
+              <p style="color: var(--text-muted); margin-bottom: 1rem;">${this.currentCreator.bio}</p>
+              ${this.currentCreator.isVerified ? '<div class="profile-badge">✓ موثق</div>' : ''}
+              <div class="profile-stats">
+                <div><strong>${this.currentCreator.followers}</strong> متابع</div>
+                <div><strong>${this.currentCreator.scripts}</strong> سكريبت</div>
+                <div>⭐ <strong>${this.currentCreator.rating}</strong> تقييم</div>
+              </div>
+              <button class="btn" style="margin-top: 1rem;" onclick="alert('تم متابعة ${this.currentCreator.name}!')">متابعة</button>
+            </div>
+          </div>
+          <h2 style="margin: 2rem 0 1rem;">سكريبتات ${this.currentCreator.name}</h2>
+          <div class="grid">
+            ${creatorScripts.map(s => `
+              <div class="card" onclick="app.viewScript(${s.id})">
+                <div class="card-title">${s.title}</div>
+                <div class="card-desc">${s.description}</div>
+                <div class="card-rating">⭐ ${s.rating}</div>
+                <div class="card-actions">
+                  <button class="btn btn-small" onclick="event.stopPropagation(); app.download(${s.id})">تحميل</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        document.getElementById('creator-container').innerHTML = html;
+        this.navigate('creator');
+      },
+
+      searchCreators() {
+        const search = document.getElementById('search-creators')?.value || '';
+        const filtered = this.creators.filter(c =>
+          c.name.includes(search) || c.bio.includes(search)
+        );
+        const container = document.getElementById('search-results');
+        container.innerHTML = filtered.length > 0 ? filtered.map(c => `
+          <div class="card" onclick="app.viewCreator(${c.id})">
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <div class="profile-avatar" style="width: 100px; height: 100px; margin: 0 auto;">${c.name[0]}</div>
+            </div>
+            <div class="card-title" style="text-align: center;">${c.name}</div>
+            <div class="card-desc" style="text-align: center;">${c.bio}</div>
+            ${c.isVerified ? '<div class="profile-badge">✓ موثق</div>' : ''}
+            <div class="profile-stats" style="justify-content: center;">
+              <div><strong>${c.followers}</strong> متابع</div>
+              <div><strong>${c.scripts}</strong> سكريبت</div>
+            </div>
+          </div>
+        `).join('') : '<div class="empty-state"><h3>لا توجد نتائج</h3><p>حاول البحث عن شيء آخر</p></div>';
+      },
+
+      updateStats() {
+        const totalDownloads = this.scripts.reduce((a, s) => a + s.downloads, 0);
+        const totalViews = this.scripts.reduce((a, s) => a + s.views, 0);
+
+        document.getElementById('total-scripts').textContent = this.scripts.length;
+        document.getElementById('total-creators').textContent = this.creators.length;
+        document.getElementById('total-downloads').textContent = totalDownloads;
+        document.getElementById('total-views').textContent = totalViews;
+      },
+
+      download(scriptId) {
+        if (!this.currentUser) {
+          alert('يرجى تسجيل الدخول أولاً');
+          this.showModal('login');
+          return;
+        }
+        const script = this.scripts.find(s => s.id === scriptId);
+        if (script) {
+          script.downloads++;
+          script.rating = parseFloat((script.rating + (Math.random() * 0.1 - 0.05)).toFixed(1));
+          this.updateStats();
+          alert(`تم تحميل: ${script.title}`);
+        }
+      },
+
+      showModal(type, scriptId = null) {
+        this.closeModal();
+        if (type === 'login') {
+          document.getElementById('login-modal').classList.add('active');
+        } else if (type === 'upload') {
+          if (!this.currentUser) {
+            alert('يرجى تسجيل الدخول أولاً');
+            this.showModal('login');
+            return;
+          }
+          document.getElementById('upload-modal').classList.add('active');
+        } else if (type === 'rating') {
+          if (!this.currentUser) {
+            alert('يرجى تسجيل الدخول أولاً');
+            this.showModal('login');
+            return;
+          }
+          this.currentScript = this.scripts.find(s => s.id === scriptId);
+          document.getElementById('rating-modal').classList.add('active');
+        } else if (type === 'report') {
+          if (!this.currentUser) {
+            alert('يرجى تسجيل الدخول أولاً');
+            this.showModal('login');
+            return;
+          }
+          this.currentScript = this.scripts.find(s => s.id === scriptId);
+          document.getElementById('report-modal').classList.add('active');
+        }
+      },
+
+      setRating(rating) {
+        this.selectedRating = rating;
+        document.querySelectorAll('#modal-stars .star').forEach((star, idx) => {
+          star.classList.toggle('active', idx < rating);
+        });
+      },
+
+      submitRating() {
+        if (this.selectedRating === 0) {
+          alert('يرجى اختيار تقييم');
+          return;
+        }
+        if (!this.currentScript) return;
+
+        const review = document.getElementById('rating-review').value;
+        this.currentScript.ratingCount++;
+        const oldRating = this.currentScript.rating;
+        this.currentScript.rating = parseFloat(
+          (((oldRating * (this.currentScript.ratingCount - 1)) + this.selectedRating) / this.currentScript.ratingCount).toFixed(1)
+        );
+
+        alert(`شكراً لتقييمك ${this.currentScript.title}!`);
+        this.closeModal();
+        this.selectedRating = 0;
+      },
+
+      submitReport() {
+        if (!this.currentScript) return;
+        const reason = document.getElementById('report-reason').value;
+        if (!reason) {
+          alert('يرجى اختيار سبب البلاغ');
+          return;
+        }
+        alert(`تم إرسال البلاغ عن ${this.currentScript.title}`);
+        this.closeModal();
+      },
+
+      uploadScript() {
+        if (!this.currentUser) {
+          alert('يرجى تسجيل الدخول أولاً');
+          return;
+        }
+
+        const title = document.getElementById('upload-title').value;
+        const desc = document.getElementById('upload-desc').value;
+        const url = document.getElementById('upload-url').value;
+        const duration = document.getElementById('upload-duration').value;
+
+        if (!title || !desc || !url) {
+          alert('يرجى ملء جميع الحقول المطلوبة');
+          return;
+        }
+
+        const newScript = {
+          id: Math.max(...this.scripts.map(s => s.id)) + 1,
+          title,
+          description: desc,
+          creator: this.currentUser,
+          creatorId: this.creators.length + 1,
+          views: 0,
+          downloads: 0,
+          rating: 5,
+          ratingCount: 1,
+          coins: 5,
+          hasFxManifest: true,
+          duration
+        };
+
+        this.scripts.push(newScript);
+        alert('تم رفع السكريبت بنجاح!');
+        this.closeModal();
+        this.renderScripts();
+        this.updateStats();
+      },
+
+      login() {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+
+        if (!username || !password) {
+          alert('يرجى إدخال اسم المستخدم وكلمة المرور');
+          return;
+        }
+
+        this.currentUser = username;
+        document.getElementById('login-btn').innerHTML = `${username}`;
+        this.closeModal();
+        alert(`مرحباً ${username}!`);
+      },
+
+      closeModal() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        this.selectedRating = 0;
+      }
+    };
+
+    app.init();
+  </script>
+</body>
+</html>
